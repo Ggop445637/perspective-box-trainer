@@ -2,232 +2,914 @@
 <html lang="ru">
 <head>
 <meta charset="utf-8">
-<title>Perspective Box Trainer V6.1</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Perspective Box Trainer</title>
 <style>
-    body {
-        margin: 0;
-        background: #1e1e1e;
-        color: white;
-        font-family: Arial, sans-serif;
-        overflow: hidden;
-        touch-action: manipulation;
+    :root {
+        --bg: #0f0f12;
+        --panel: #1a1a20;
+        --panel2: #22222a;
+        --text: #eee;
+        --text-dim: #aaa;
+        --accent: #0066ff;
+        --border: rgba(255,255,255,0.08);
+        --cube1: #ffffff;
+        --cube2: #00ddff;
+        --cube3: #ffaa00;
+        --target-color: #ff3366;
     }
+    body.light {
+        --bg: #f2f2f5;
+        --panel: #ffffff;
+        --panel2: #f0f0f4;
+        --text: #1a1a1f;
+        --text-dim: #555;
+        --border: rgba(0,0,0,0.08);
+        --cube1: #1a1a1f;
+        --cube2: #0077aa;
+        --cube3: #cc7700;
+    }
+    * { box-sizing: border-box; }
+    body { margin:0; padding:0; background:var(--bg); color:var(--text); font-family:'Segoe UI',Arial,sans-serif; overflow:hidden; transition: background .2s, color .2s; }
+
+    #app { position: relative; width: 100vw; height: 100vh; background: var(--bg); }
+
+    #ui {
+        transition: transform .25s ease, opacity .25s ease;
+    }
+    #ui.collapsed {
+        transform: translateX(-120%);
+        opacity: 0;
+        pointer-events: none;
+    }
+
+    #menu-toggle {
+        position: fixed;
+        top: 12px; left: 12px;
+        z-index: 30003;
+        width: 42px; height: 42px;
+        border-radius: 10px;
+        display: flex; align-items: center; justify-content: center;
+        font-size: 1.2em;
+        background: var(--panel);
+        border: 1px solid var(--border);
+        box-shadow: 0 4px 16px rgba(0,0,0,0.35);
+        transition: left .25s ease;
+    }
+    #menu-toggle.with-menu-open { left: 344px; }
+    @media (max-width: 640px) {
+        #menu-toggle.with-menu-open { left: 12px; }
+    }
+
+    canvas#cv { touch-action: none; }
+
     #ui {
         position: fixed;
-        top: 10px;
-        left: 10px;
-        background: rgba(0,0,0,0.9);
-        padding: 15px;
-        border-radius: 12px;
-        z-index: 100;
+        top: 12px; left: 12px;
+        background: var(--panel);
+        padding: 18px;
+        border-radius: 16px;
+        width: 320px;
+        max-height: calc(100vh - 24px);
+        overflow-y: auto;
+        z-index: 30000;
+        box-shadow: 0 8px 32px rgba(0,0,0,0.4);
         user-select: none;
-        min-width: 280px;
-        box-shadow: 0 4px 25px rgba(0,0,0,0.6);
+        border: 1px solid var(--border);
     }
+    #ui::-webkit-scrollbar { width: 6px; }
+    #ui::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+
+    h1 { margin:0 0 4px 0; font-size:1.4em; }
+    p.sub { margin:0 0 14px 0; opacity:0.7; font-size:0.85em; }
+    strong.label { display:block; margin-top:14px; margin-bottom:6px; font-size:0.85em; opacity:0.85; text-transform: uppercase; letter-spacing: 0.04em; }
+
     button {
-        background: #333;
-        color: white;
-        border: none;
-        padding: 10px 14px;
-        margin: 4px 2px;
-        border-radius: 8px;
-        cursor: pointer;
-        font-size: 1em;
+        background: var(--panel2); color: var(--text); border: 1px solid var(--border); padding:9px 11px; margin:0;
+        border-radius:8px; cursor:pointer; font-size:0.9em; transition: background .15s, transform .1s;
     }
-    button.active {
-        background: #0a0;
-        font-weight: bold;
-    }
-    .row { display: flex; flex-wrap: wrap; gap: 4px; }
+    button:hover { filter: brightness(1.15); }
+    button:active { transform: scale(0.97); }
+    button.active { background: var(--accent); color: white; border-color: var(--accent); }
+    .row { display:flex; flex-wrap:wrap; gap:6px; }
+    .row button { flex: 1 1 auto; }
+
+    #tabs { display:flex; gap:6px; margin-bottom: 6px; }
+    #tabs button { flex:1; padding: 10px; font-weight:600; }
+
     #timer {
-        font-size: 1.9em;
+        position: absolute;
+        top: 25px; right: 25px;
+        z-index: 30001;
+        font-size: 2.6em;
         font-weight: bold;
-        color: #0f0;
-        margin: 12px 0;
-        text-align: center;
+        text-shadow: 0 0 12px black;
+        pointer-events: none;
+        color: #00ff88;
     }
-    canvas { display: block; }
+    .lang-btn {
+        position: absolute;
+        top: 15px; right: 170px;
+        z-index: 30002;
+        padding: 8px 14px;
+        border-radius: 8px;
+    }
+    canvas { display: block; position: absolute; top:0; left:0; }
+    #draw-cv { touch-action: none; cursor: crosshair; }
+
+    #stats-panel {
+        position: fixed;
+        bottom: 12px; right: 12px;
+        background: var(--panel);
+        padding: 14px 18px;
+        border-radius: 14px;
+        z-index: 30000;
+        border: 1px solid var(--border);
+        font-size: 0.9em;
+        min-width: 160px;
+    }
+    #stats-panel .stat-row { display:flex; justify-content:space-between; gap:14px; margin: 3px 0; }
+    #stats-panel .stat-row b { color: var(--accent); }
+
+    #help {
+        display:none; position:fixed; bottom:20px; left:20px;
+        background:var(--panel); padding:18px; border-radius:14px; max-width:320px; z-index:30000;
+        border: 1px solid var(--border); font-size: 0.9em; line-height: 1.6;
+    }
+
+    .color-row { display:flex; align-items:center; gap:8px; margin: 6px 0; font-size:0.85em; }
+    .color-row input[type=color] { width:34px; height:28px; border:none; border-radius:6px; background:none; cursor:pointer; padding:0; }
+    .color-row span { flex:1; opacity:0.85; }
+
+    #drawhint {
+        position: fixed; top: 50%; left: 50%; transform: translate(-50%,-50%);
+        font-size: 1.1em; opacity: 0.35; pointer-events: none; text-align:center; z-index: 1;
+    }
+
+    .hidden { display: none !important; }
+
+    /* Mobile */
+    @media (max-width: 640px) {
+        #ui { width: calc(100vw - 24px); }
+        #stats-panel { left:12px; right:12px; width:auto; }
+        .lang-btn { right: 12px; top: 60px; }
+        #timer { font-size: 1.8em; top: 16px; right: 16px; }
+    }
 </style>
 </head>
 <body>
-<div id="ui">
-    <b>Perspective Box Trainer</b><br><br>
-    
-    <strong>Сложность:</strong><br>
-    <div class="row" id="mode-buttons">
-        <button data-mode="1">1 — Лёгкий</button>
-        <button data-mode="2" class="active">2 — Средний</button>
-        <button data-mode="3">3 — Сложный</button>
-    </div><br>
-    
-    <strong>Таймер:</strong><br>
-    <div class="row" id="duration-buttons">
-        <button data-sec="5">5s</button>
-        <button data-sec="10" class="active">10s</button>
-        <button data-sec="15">15s</button>
-        <button data-sec="30">30s</button>
-    </div>
-    <button id="toggle-timer" style="width:100%; margin-top:6px;">⏸ Отключить таймер</button>
-    
-    <div id="timer">10s</div>
-    
-    <div class="row">
-        <button id="new-box" style="flex:1; background:#0066ff;">Новый куб (Space / N)</button>
-        <button id="pause-btn" style="flex:1;">⏸ Пауза</button>
-    </div>
-    
-    <div style="margin-top:10px; font-size:0.95em; opacity:0.8;">
-        Кубов за сессию: <span id="count">0</span>
-    </div>
-</div>
-<canvas id="cv"></canvas>
+<div id="app">
 
+<button class="lang-btn" id="lang-toggle">EN</button>
+<button id="menu-toggle" class="with-menu-open" title="Скрыть/показать меню">☰</button>
+
+<div id="ui">
+    <h1 id="title">Perspective Box Trainer</h1>
+    <p class="sub" id="desc">Тренажёр перспективы для рисования кубов</p>
+
+    <div id="tabs">
+        <button id="tab-practice" class="active" data-i18n="tabPractice">Практика</button>
+        <button id="tab-draw" data-i18n="tabDraw">Нарисуй и проверь</button>
+    </div>
+
+    <!-- PRACTICE MODE CONTROLS -->
+    <div id="practice-controls">
+        <strong class="label" data-i18n="mode">Режим перспективы:</strong>
+        <div class="row" id="mode-buttons">
+            <button data-mode="1" data-i18n="m1">1 — Простой</button>
+            <button data-mode="2" class="active" data-i18n="m2">2 — Угловой</button>
+            <button data-mode="3" data-i18n="m3">3 — Динамичный</button>
+        </div>
+
+        <strong class="label" data-i18n="type">Тип перспективы:</strong>
+        <div class="row">
+            <button id="same-persp" class="active" data-i18n="same">Одинаковая</button>
+            <button id="diff-persp" data-i18n="diff">Разная</button>
+        </div>
+
+        <strong class="label" data-i18n="cubes">Количество кубов:</strong>
+        <div class="row" id="cubes-buttons">
+            <button data-cubes="1" class="active">1</button>
+            <button data-cubes="2">2</button>
+            <button data-cubes="3">3</button>
+        </div>
+
+        <strong class="label" data-i18n="timer">Таймер:</strong>
+        <div class="row" id="duration-buttons">
+            <button data-sec="5">5s</button>
+            <button data-sec="10" class="active">10s</button>
+            <button data-sec="15">15s</button>
+            <button data-sec="30">30s</button>
+        </div>
+        <button id="toggle-timer" style="width:100%; margin:8px 0;" data-i18n="disableTimer">Отключить таймер</button>
+
+        <strong class="label" data-i18n="freeRotLabel">Вращение мышью:</strong>
+        <button id="toggle-free" style="width:100%;" data-i18n="freeRotOff">Свободное вращение: выкл</button>
+        <p class="sub" style="margin:6px 0 0 0; font-size:0.78em;" data-i18n="freeRotHelp">Перетаскивайте сцену для вращения камеры, колесо мыши / щипок двумя пальцами — масштаб.</p>
+        <button id="reset-view" style="width:100%; margin-top:6px;" data-i18n="resetView">↺ Сбросить вид</button>
+    </div>
+
+    <!-- DRAW & CHECK CONTROLS -->
+    <div id="draw-controls" class="hidden">
+        <strong class="label" data-i18n="drawModeLabel">Режим рисования:</strong>
+        <p class="sub" style="margin-bottom:8px;" data-i18n="drawHelp">Нарисуйте куб по памяти, затем нажмите «Проверить», чтобы увидеть правильный вариант поверх вашего рисунка.</p>
+        <div class="row">
+            <button id="draw-clear" style="flex:1;" data-i18n="clear">Очистить</button>
+            <button id="draw-check" style="flex:1; background:var(--accent); color:white;" data-i18n="check">Проверить</button>
+        </div>
+        <div class="row" style="margin-top:6px;">
+            <button id="draw-new" style="flex:1;" data-i18n="newTarget">Новая задача</button>
+        </div>
+        <strong class="label" data-i18n="mode">Режим перспективы:</strong>
+        <div class="row" id="mode-buttons-draw">
+            <button data-mode="1" data-i18n="m1">1 — Простой</button>
+            <button data-mode="2" class="active" data-i18n="m2">2 — Угловой</button>
+            <button data-mode="3" data-i18n="m3">3 — Динамичный</button>
+        </div>
+        <strong class="label" data-i18n="previewLabel">Время показа куба:</strong>
+        <div class="row" id="preview-buttons">
+            <button data-sec="2">2s</button>
+            <button data-sec="3" class="active">3s</button>
+            <button data-sec="5">5s</button>
+        </div>
+    </div>
+
+    <div class="row" style="margin-top:14px;">
+        <button id="new-box" style="flex:1; background:var(--accent); color:white;" data-i18n="newPose">Новая поза</button>
+        <button id="fullscreen" style="flex:1;">⛶ <span data-i18n="fullscreen">Во весь экран</span></button>
+    </div>
+
+    <strong class="label" data-i18n="appearance">Внешний вид:</strong>
+    <div class="row">
+        <button id="theme-toggle" style="flex:1;" data-i18n="lightTheme">☀ Светлая тема</button>
+    </div>
+    <div class="color-row"><span data-i18n="colorAccent">Акцент</span><input type="color" id="color-accent" value="#0066ff"></div>
+    <div class="color-row"><span data-i18n="colorCube1">Куб 1</span><input type="color" id="color-cube1" value="#ffffff"></div>
+    <div class="color-row"><span data-i18n="colorCube2">Куб 2</span><input type="color" id="color-cube2" value="#00ddff"></div>
+    <div class="color-row"><span data-i18n="colorCube3">Куб 3</span><input type="color" id="color-cube3" value="#ffaa00"></div>
+    <div class="color-row"><span data-i18n="colorTarget">Эталон (Проверка)</span><input type="color" id="color-target" value="#ff3366"></div>
+
+    <div style="margin-top:12px;">
+        <span data-i18n="cubesDrawn">Кубов нарисовано:</span> <span id="count">0</span>
+        <button id="reset-count" style="font-size:0.85em; padding:5px 10px;" data-i18n="reset">Сброс</button>
+    </div>
+
+    <button id="toggle-help" style="width:100%; margin-top:12px;" data-i18n="showInstructions">Показать инструкции</button>
+</div>
+
+<div id="timer">10s</div>
+
+<div id="stats-panel">
+    <div class="stat-row"><span data-i18n="statToday">Сегодня</span><b id="stat-today">0</b></div>
+    <div class="stat-row"><span data-i18n="statTotal">Всего</span><b id="stat-total">0</b></div>
+    <div class="stat-row"><span data-i18n="statStreak">Серия (дней)</span><b id="stat-streak">0</b></div>
+</div>
+
+<div id="help">
+    <strong data-i18n="hotkeysTitle">Горячие клавиши</strong><br><br>
+    <span id="hk1" data-i18n="hk1">Space / N — новая поза</span><br>
+    <span id="hk2" data-i18n="hk2">F — во весь экран</span><br>
+    <span id="hk3" data-i18n="hk3">T — пауза таймера</span><br>
+    <span id="hk4" data-i18n="hk4">R — сброс свободного вращения</span><br>
+    <span id="hk5" data-i18n="hk5">M — скрыть/показать меню</span>
+</div>
+
+<div id="drawhint" data-i18n="drawHint">Рисуйте мышью или пальцем</div>
+
+<canvas id="cv"></canvas>
+<canvas id="draw-cv" class="hidden"></canvas>
+
+</div>
 <script>
-// ... (тот же рабочий код, но с добавленными кнопками)
+const app = document.getElementById("app");
 const canvas = document.getElementById("cv");
 const ctx = canvas.getContext("2d");
+const drawCanvas = document.getElementById("draw-cv");
+const drawCtx = drawCanvas.getContext("2d");
 const timerEl = document.getElementById("timer");
-const countEl = document.getElementById("count");
+const drawHint = document.getElementById("drawhint");
 
-function resize() {
-    canvas.width = innerWidth;
-    canvas.height = innerHeight;
-}
-window.addEventListener("resize", resize);
-resize();
+let lang = 'ru';
+let mode = 2, numCubes = 1, timerEnabled = true, isPaused = false;
+let samePerspective = true;
+let nextTime = Date.now() + 10000, timerDuration = 10000, boxCount = 0;
+let cubeData = []; // raw cube data for re-projection: {sx,sy,sz,offsetX,offsetY,offsetZ,yaw,pitch}
+let cubeColors = ["#ffffff", "#00ddff", "#ffaa00"];
+let targetColor = "#ff3366";
 
-let mode = 2;
-let auto = true;
-let timerEnabled = true;
-let isPaused = false;
-let nextTime = Date.now() + 10000;
-let timerDuration = 10000;
-let boxCount = 0;
+let appMode = 'practice'; // 'practice' | 'draw'
+let freeRotation = false;
+let manualYaw = 0, manualPitch = 0;
+let cameraZoom = 1;
+let dragging = false, lastX = 0, lastY = 0;
+
+let drawTarget = null; // single cube data for draw&check
+let checked = false;
+let userStrokes = []; // array of arrays of {x,y}
+let currentStroke = null;
+let showingPreview = false;
+let previewEndTime = 0;
+let previewDuration = 3000;
 
 const edges = [[0,1],[1,2],[2,3],[3,0],[4,5],[5,6],[6,7],[7,4],[0,4],[1,5],[2,6],[3,7]];
 const faces = [[0,1,2,3],[5,4,7,6],[0,4,5,1],[3,2,6,7],[0,3,7,4],[1,5,6,2]];
 
-let projected = [];
+const translations = {
+    ru: {
+        title:"Perspective Box Trainer", desc:"Тренажёр перспективы для рисования кубов",
+        mode:"Режим перспективы:", type:"Тип перспективы:", cubes:"Количество кубов:", timer:"Таймер:",
+        tabPractice:"Практика", tabDraw:"Нарисуй и проверь",
+        m1:"1 — Простой", m2:"2 — Угловой", m3:"3 — Динамичный",
+        same:"Одинаковая", diff:"Разная",
+        disableTimer:"Отключить таймер", enableTimer:"Включить таймер",
+        freeRotLabel:"Вращение мышью:", freeRotOff:"Свободное вращение: выкл", freeRotOn:"Свободное вращение: вкл",
+        drawModeLabel:"Режим рисования:",
+        drawHelp:"Нарисуйте куб по памяти, затем нажмите «Проверить», чтобы увидеть правильный вариант поверх вашего рисунка.",
+        clear:"Очистить", check:"Проверить", newTarget:"Новая задача",
+        newPose:"Новая поза", fullscreen:"Во весь экран",
+        appearance:"Внешний вид:", lightTheme:"☀ Светлая тема", darkTheme:"🌙 Тёмная тема",
+        colorAccent:"Акцент", colorCube1:"Куб 1", colorCube2:"Куб 2", colorCube3:"Куб 3", colorTarget:"Эталон (Проверка)",
+        cubesDrawn:"Кубов нарисовано:", reset:"Сброс", showInstructions:"Показать инструкции", hideInstructions:"Скрыть инструкции",
+        statToday:"Сегодня", statTotal:"Всего", statStreak:"Серия (дней)",
+        hotkeysTitle:"Горячие клавиши",
+        hk1:"Space / N — новая поза", hk2:"F — во весь экран", hk3:"T — пауза таймера", hk4:"R — сброс вращения",
+        hk5:"M — скрыть/показать меню",
+        drawHint:"Рисуйте мышью или пальцем",
+        memorize:"Запомните куб...",
+        previewLabel:"Время показа куба:",
+        freeRotHelp:"Перетаскивайте сцену для вращения камеры, колесо мыши / щипок двумя пальцами — масштаб.",
+        resetView:"↺ Сбросить вид",
+        menuToggle:"Скрыть/показать меню"
+    },
+    en: {
+        title:"Perspective Box Trainer", desc:"Perspective drawing trainer for cubes",
+        mode:"Perspective Mode:", type:"Perspective Type:", cubes:"Number of cubes:", timer:"Timer:",
+        tabPractice:"Practice", tabDraw:"Draw & Check",
+        m1:"1 — Basic", m2:"2 — Angled", m3:"3 — Dynamic",
+        same:"Same", diff:"Different",
+        disableTimer:"Disable Timer", enableTimer:"Enable Timer",
+        freeRotLabel:"Mouse rotation:", freeRotOff:"Free rotation: off", freeRotOn:"Free rotation: on",
+        drawModeLabel:"Draw mode:",
+        drawHelp:"Draw a cube from memory, then press \"Check\" to reveal the correct cube over your drawing.",
+        clear:"Clear", check:"Check", newTarget:"New Target",
+        newPose:"New Pose", fullscreen:"Fullscreen",
+        appearance:"Appearance:", lightTheme:"☀ Light theme", darkTheme:"🌙 Dark theme",
+        colorAccent:"Accent", colorCube1:"Cube 1", colorCube2:"Cube 2", colorCube3:"Cube 3", colorTarget:"Target (Check)",
+        cubesDrawn:"Cubes drawn:", reset:"Reset", showInstructions:"Show Instructions", hideInstructions:"Hide Instructions",
+        statToday:"Today", statTotal:"Total", statStreak:"Streak (days)",
+        hotkeysTitle:"Hotkeys",
+        hk1:"Space / N — new pose", hk2:"F — fullscreen", hk3:"T — pause timer", hk4:"R — reset rotation",
+        hk5:"M — hide/show menu",
+        drawHint:"Draw with mouse or finger",
+        memorize:"Memorize the cube...",
+        previewLabel:"Cube preview time:",
+        freeRotHelp:"Drag the scene to orbit the camera, mouse wheel / two-finger pinch to zoom.",
+        resetView:"↺ Reset View",
+        menuToggle:"Hide/show menu"
+    }
+};
 
-function rotX(p, a) { const [x,y,z]=p; return [x, y*Math.cos(a)-z*Math.sin(a), y*Math.sin(a)+z*Math.cos(a)]; }
-function rotY(p, a) { const [x,y,z]=p; return [x*Math.cos(a)+z*Math.sin(a), y, -x*Math.sin(a)+z*Math.cos(a)]; }
+function resize() {
+    canvas.width = innerWidth; canvas.height = innerHeight;
+    drawCanvas.width = innerWidth; drawCanvas.height = innerHeight;
+    redrawUserStrokes();
+}
+window.addEventListener("resize", resize); resize();
 
-function generate() {
-    const sx = 80 + Math.random() * 140;
-    const sy = 80 + Math.random() * 140;
-    const sz = 80 + Math.random() * 140;
+function rotX(p,a){const[x,y,z]=p;return[x,y*Math.cos(a)-z*Math.sin(a),y*Math.sin(a)+z*Math.cos(a)];}
+function rotY(p,a){const[x,y,z]=p;return[x*Math.cos(a)+z*Math.sin(a),y,-x*Math.sin(a)+z*Math.cos(a)];}
 
-    let verts = [[-sx,-sy,-sz],[sx,-sy,-sz],[sx,sy,-sz],[-sx,sy,-sz],[-sx,-sy,sz],[sx,-sy,sz],[sx,sy,sz],[-sx,sy,sz]];
+function makeCubeRaw(sx,sy,sz,offsetX,offsetY,offsetZ){
+    return [
+        [-sx+offsetX, -sy+offsetY, -sz+offsetZ],
+        [sx+offsetX, -sy+offsetY, -sz+offsetZ],
+        [sx+offsetX, sy+offsetY, -sz+offsetZ],
+        [-sx+offsetX, sy+offsetY, -sz+offsetZ],
+        [-sx+offsetX, -sy+offsetY, sz+offsetZ],
+        [sx+offsetX, -sy+offsetY, sz+offsetZ],
+        [sx+offsetX, sy+offsetY, sz+offsetZ],
+        [-sx+offsetX, sy+offsetY, sz+offsetZ]
+    ];
+}
 
-    let yaw = 0, pitch = 0;
-    if (mode === 1) { yaw = (Math.random()-0.5)*0.3; pitch = (Math.random()-0.5)*0.25; }
-    else if (mode === 2) { yaw = (Math.random()<0.5 ? -1 : 1) * (0.5 + Math.random()*1.1); pitch = (Math.random()-0.5)*0.35; }
-    else { yaw = (Math.random()<0.5 ? -1 : 1) * (0.6 + Math.random()*1.2); pitch = (Math.random()<0.5 ? -1 : 1) * (0.4 + Math.random()*0.9); }
-
-    projected = verts.map(v => {
-        v = rotY(v, yaw);
-        v = rotX(v, pitch);
-        const z = v[2] + 720;
-        const f = 720 / z;
+function project(rawVerts, yaw, pitch){
+    return rawVerts.map(v => {
+        v = rotY(v, yaw + manualYaw);
+        v = rotX(v, pitch + manualPitch);
+        const z = v[2] + 820;
+        const f = (820 / z) * cameraZoom;
         return { x: canvas.width/2 + v[0]*f, y: canvas.height/2 + v[1]*f, z };
     });
-
-    if (timerEnabled && !isPaused) nextTime = Date.now() + timerDuration;
-    boxCount++;
-    countEl.textContent = boxCount;
 }
 
-function isFaceVisible(face) {
-    const a = projected[face[0]], b = projected[face[1]], c = projected[face[2]];
-    const vx = b.x - a.x, vy = b.y - a.y;
-    const wx = c.x - a.x, wy = c.y - a.y;
-    return (vx * wy - vy * wx) > 0;
+function randomAngles(m){
+    let yaw, pitch;
+    if(m===1){ yaw=(Math.random()-0.5)*0.4; pitch=(Math.random()-0.5)*0.3; }
+    else if(m===2){ yaw=(Math.random()<0.5?-1:1)*(0.6+Math.random()*1.0); pitch=(Math.random()-0.5)*0.4; }
+    else { yaw=(Math.random()<0.5?-1:1)*(0.7+Math.random()*1.3); pitch=(Math.random()<0.5?-1:1)*(0.5+Math.random()*0.9); }
+    return {yaw, pitch};
 }
 
-function draw() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    const visibleFaces = faces.filter(isFaceVisible);
+function generate() {
+    cubeData = [];
+    manualYaw = 0; manualPitch = 0; cameraZoom = 1;
+    const spacing = 520;
 
-    for (let [a, b] of edges) {
-        let hidden = !visibleFaces.some(face => face.includes(a) && face.includes(b));
+    let base = randomAngles(mode);
+
+    for(let i = 0; i < numCubes; i++) {
+        const sx = 75 + Math.random()*120;
+        const sy = 75 + Math.random()*120;
+        const sz = 75 + Math.random()*120;
+
+        const offsetX = (i - (numCubes-1)/2) * spacing + (Math.random()-0.5)*80;
+        const offsetY = (Math.random()-0.5)*120;
+        const offsetZ = (Math.random()-0.5)*80;
+
+        let angles = samePerspective ? base : randomAngles(mode);
+
+        cubeData.push({
+            raw: makeCubeRaw(sx,sy,sz,offsetX,offsetY,offsetZ),
+            yaw: angles.yaw, pitch: angles.pitch
+        });
+    }
+
+    if(timerEnabled && !isPaused) nextTime = Date.now() + timerDuration;
+    recordCubeDrawn();
+}
+
+function isFaceVisible(face, projected) {
+    const a=projected[face[0]],b=projected[face[1]],c=projected[face[2]];
+    return ((b.x-a.x)*(c.y-a.y) - (b.y-a.y)*(c.x-a.x)) > 0;
+}
+
+function drawCubeWire(projected, color, alpha, occlude) {
+    const visible = faces.filter(f => isFaceVisible(f, projected));
+
+    // Mask out anything drawn so far (e.g. cubes farther away) behind the
+    // visible (front-facing) faces of this cube, so nearer cubes correctly
+    // occlude farther ones instead of every wireframe showing through.
+    if(occlude){
+        const bg = getComputedStyle(document.body).getPropertyValue('--bg').trim() || "#0f0f12";
+        ctx.globalAlpha = 1;
+        ctx.fillStyle = bg;
+        for(const f of visible){
+            ctx.beginPath();
+            ctx.moveTo(projected[f[0]].x, projected[f[0]].y);
+            for(let i=1;i<f.length;i++) ctx.lineTo(projected[f[i]].x, projected[f[i]].y);
+            ctx.closePath();
+            ctx.fill();
+        }
+    }
+
+    ctx.globalAlpha = alpha !== undefined ? alpha : 1;
+    for(let [a,b] of edges){
+        const hidden = !visible.some(f => f.includes(a)&&f.includes(b));
         ctx.beginPath();
         ctx.lineWidth = 3.5;
-        if (hidden) {
-            ctx.setLineDash([9, 7]);
-            ctx.strokeStyle = "#555";
-        } else {
-            ctx.setLineDash([]);
-            ctx.strokeStyle = "#fff";
-        }
+        ctx.setLineDash(hidden ? [9,7] : []);
+        ctx.strokeStyle = hidden ? "#777" : color;
         ctx.moveTo(projected[a].x, projected[a].y);
         ctx.lineTo(projected[b].x, projected[b].y);
         ctx.stroke();
     }
+    ctx.globalAlpha = 1;
+    ctx.setLineDash([]);
+}
 
-    if (timerEnabled && !isPaused) {
-        const remaining = Math.max(0, Math.ceil((nextTime - Date.now()) / 1000));
-        timerEl.textContent = remaining + "s";
-        timerEl.style.color = remaining <= 3 ? "#f44" : "#0f0";
-        if (Date.now() > nextTime) generate();
-    } else if (!timerEnabled) {
-        timerEl.textContent = "∞";
-        timerEl.style.color = "#aaa";
+function draw() {
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+
+    if(appMode === 'practice') {
+        // Project all cubes first, then sort by average depth (z) so the
+        // farthest cube is painted first and nearer cubes correctly occlude it.
+        const items = cubeData.map((cube, index) => {
+            const projected = project(cube.raw, cube.yaw, cube.pitch);
+            const avgZ = projected.reduce((s,p)=>s+p.z,0) / projected.length;
+            return { projected, color: cubeColors[index % cubeColors.length], avgZ };
+        });
+        items.sort((a,b) => b.avgZ - a.avgZ); // farther (larger z) first
+
+        items.forEach((item, i) => {
+            drawCubeWire(item.projected, item.color, undefined, i > 0);
+        });
+
+        if(timerEnabled && !isPaused){
+            const rem = Math.max(0, Math.ceil((nextTime - Date.now())/1000));
+            timerEl.textContent = rem + "s";
+            timerEl.style.color = rem <= 3 ? "#ff4444" : "#00ff88";
+            if(Date.now() > nextTime) generate();
+        } else if(!timerEnabled){
+            timerEl.textContent = "∞";
+            timerEl.style.color = "#888";
+        } else {
+            timerEl.textContent = "⏸";
+            timerEl.style.color = "#ffcc00";
+        }
     } else {
-        timerEl.textContent = "ПАУЗА";
-        timerEl.style.color = "#ff0";
+        // draw & check mode
+        if(showingPreview && drawTarget) {
+            const projected = project(drawTarget.raw, drawTarget.yaw, drawTarget.pitch);
+            drawCubeWire(projected, cubeColors[0]);
+            const rem = Math.max(0, Math.ceil((previewEndTime - Date.now())/1000));
+            timerEl.textContent = rem + "s";
+            timerEl.style.color = "#00ff88";
+            if(Date.now() > previewEndTime){
+                showingPreview = false;
+                drawHint.textContent = translations[lang].drawHint;
+                drawHint.style.opacity = 0.35;
+            }
+        } else {
+            timerEl.textContent = "";
+            if(checked && drawTarget) {
+                const projected = project(drawTarget.raw, drawTarget.yaw, drawTarget.pitch);
+                drawCubeWire(projected, targetColor, 0.55);
+            }
+        }
     }
 
     requestAnimationFrame(draw);
 }
 
-// Кнопки
-document.getElementById("new-box").addEventListener("click", generate);
+// ---------- Draw & Check ----------
+function generateDrawTarget(){
+    manualYaw = 0; manualPitch = 0; cameraZoom = 1;
+    const sx = 90 + Math.random()*110;
+    const sy = 90 + Math.random()*110;
+    const sz = 90 + Math.random()*110;
+    const angles = randomAngles(mode);
+    drawTarget = { raw: makeCubeRaw(sx,sy,sz,0,0,0), yaw: angles.yaw, pitch: angles.pitch };
+    checked = false;
+    userStrokes = [];
+    redrawUserStrokes();
+    showingPreview = true;
+    previewEndTime = Date.now() + previewDuration;
+    drawHint.textContent = translations[lang].memorize;
+    drawHint.style.opacity = 0.7;
+}
 
-document.querySelectorAll("#mode-buttons button").forEach(btn => {
-    btn.addEventListener("click", () => {
-        document.querySelectorAll("#mode-buttons button").forEach(b => b.classList.remove("active"));
-        btn.classList.add("active");
-        mode = parseInt(btn.dataset.mode);
-        generate();
+function redrawUserStrokes(){
+    drawCtx.clearRect(0,0,drawCanvas.width, drawCanvas.height);
+    drawCtx.lineCap = "round";
+    drawCtx.lineJoin = "round";
+    drawCtx.strokeStyle = getComputedStyle(document.body).getPropertyValue('--text').trim() || "#fff";
+    drawCtx.lineWidth = 3;
+    for(const stroke of userStrokes){
+        if(stroke.length < 2) continue;
+        drawCtx.beginPath();
+        drawCtx.moveTo(stroke[0].x, stroke[0].y);
+        for(let i=1;i<stroke.length;i++) drawCtx.lineTo(stroke[i].x, stroke[i].y);
+        drawCtx.stroke();
+    }
+}
+
+function getPos(e){
+    const rect = drawCanvas.getBoundingClientRect();
+    const t = e.touches ? e.touches[0] : e;
+    return { x: t.clientX - rect.left, y: t.clientY - rect.top };
+}
+
+drawCanvas.addEventListener("pointerdown", e => {
+    if(appMode !== 'draw' || showingPreview) return;
+    currentStroke = [getPos(e)];
+    userStrokes.push(currentStroke);
+    drawHint.style.opacity = 0;
+    drawCanvas.setPointerCapture(e.pointerId);
+});
+drawCanvas.addEventListener("pointermove", e => {
+    if(appMode !== 'draw' || !currentStroke || showingPreview) return;
+    currentStroke.push(getPos(e));
+    redrawUserStrokes();
+});
+drawCanvas.addEventListener("pointerup", () => { currentStroke = null; });
+drawCanvas.addEventListener("pointercancel", () => { currentStroke = null; });
+
+document.getElementById("draw-clear").onclick = () => { if(showingPreview) return; userStrokes = []; checked = false; redrawUserStrokes(); drawHint.style.opacity = 0.35; };
+document.getElementById("draw-check").onclick = () => { if(showingPreview) return; checked = true; recordCubeDrawn(); };
+document.getElementById("draw-new").onclick = generateDrawTarget;
+
+document.querySelectorAll("#mode-buttons-draw button").forEach(b => b.onclick = () => {
+    document.querySelectorAll("#mode-buttons-draw button").forEach(x=>x.classList.remove("active"));
+    document.querySelectorAll("#mode-buttons button").forEach(x=>x.classList.remove("active"));
+    b.classList.add("active");
+    document.querySelector(`#mode-buttons button[data-mode="${b.dataset.mode}"]`).classList.add("active");
+    mode = +b.dataset.mode;
+    generateDrawTarget();
+});
+
+document.querySelectorAll("#preview-buttons button").forEach(b => b.onclick = () => {
+    document.querySelectorAll("#preview-buttons button").forEach(x=>x.classList.remove("active"));
+    b.classList.add("active");
+    previewDuration = +b.dataset.sec * 1000;
+});
+
+// ---------- Tabs ----------
+function setAppMode(m){
+    appMode = m;
+    document.getElementById("tab-practice").classList.toggle("active", m==='practice');
+    document.getElementById("tab-draw").classList.toggle("active", m==='draw');
+    document.getElementById("practice-controls").classList.toggle("hidden", m!=='practice');
+    document.getElementById("draw-controls").classList.toggle("hidden", m!=='draw');
+    drawCanvas.classList.toggle("hidden", m!=='draw');
+    drawHint.classList.toggle("hidden", m!=='draw');
+    if(m === 'draw') generateDrawTarget();
+    else { manualYaw = 0; manualPitch = 0; cameraZoom = 1; }
+}
+document.getElementById("tab-practice").onclick = () => setAppMode('practice');
+document.getElementById("tab-draw").onclick = () => setAppMode('draw');
+
+// ---------- Free rotation / detached camera (practice mode) ----------
+function updateFreeRotBtn(){
+    const t = translations[lang];
+    document.getElementById("toggle-free").textContent = freeRotation ? t.freeRotOn : t.freeRotOff;
+    document.getElementById("toggle-free").classList.toggle("active", freeRotation);
+}
+document.getElementById("toggle-free").onclick = () => { freeRotation = !freeRotation; updateFreeRotBtn(); saveSettings(); };
+document.getElementById("reset-view").onclick = () => { manualYaw = 0; manualPitch = 0; cameraZoom = 1; };
+
+// Track all active pointers so we can support single-finger orbit and
+// two-finger pinch-to-zoom on touch devices, alongside mouse drag + wheel.
+const activePointers = new Map();
+let pinchStartDist = null, pinchStartZoom = 1;
+let lastTapTime = 0;
+
+function pointersDistance(){
+    const pts = [...activePointers.values()];
+    if(pts.length < 2) return null;
+    const dx = pts[0].x - pts[1].x, dy = pts[0].y - pts[1].y;
+    return Math.hypot(dx, dy);
+}
+
+canvas.addEventListener("pointerdown", e => {
+    if(appMode !== 'practice' || !freeRotation) return;
+    canvas.setPointerCapture(e.pointerId);
+    activePointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
+
+    if(activePointers.size === 1){
+        dragging = true; lastX = e.clientX; lastY = e.clientY;
+
+        const now = Date.now();
+        if(now - lastTapTime < 300){ manualYaw = 0; manualPitch = 0; cameraZoom = 1; }
+        lastTapTime = now;
+    } else if(activePointers.size === 2){
+        dragging = false; // switch from orbit to pinch
+        pinchStartDist = pointersDistance();
+        pinchStartZoom = cameraZoom;
+    }
+});
+canvas.addEventListener("pointermove", e => {
+    if(!activePointers.has(e.pointerId)) return;
+    activePointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
+
+    if(activePointers.size >= 2){
+        const dist = pointersDistance();
+        if(dist && pinchStartDist){
+            cameraZoom = Math.min(2.5, Math.max(0.4, pinchStartZoom * (dist / pinchStartDist)));
+        }
+        return;
+    }
+    if(!dragging) return;
+    const dx = e.clientX - lastX, dy = e.clientY - lastY;
+    manualYaw += dx * 0.005;
+    manualPitch += dy * 0.005;
+    lastX = e.clientX; lastY = e.clientY;
+});
+function endPointer(e){
+    activePointers.delete(e.pointerId);
+    if(activePointers.size < 2) pinchStartDist = null;
+    if(activePointers.size === 0) dragging = false;
+}
+canvas.addEventListener("pointerup", endPointer);
+canvas.addEventListener("pointercancel", endPointer);
+canvas.addEventListener("pointerleave", endPointer);
+
+// Desktop mouse wheel zoom
+canvas.addEventListener("wheel", e => {
+    if(appMode !== 'practice' || !freeRotation) return;
+    e.preventDefault();
+    const delta = e.deltaY > 0 ? 0.92 : 1.08;
+    cameraZoom = Math.min(2.5, Math.max(0.4, cameraZoom * delta));
+}, { passive: false });
+
+// ---------- Collapsible menu ----------
+const uiPanel = document.getElementById("ui");
+const menuToggleBtn = document.getElementById("menu-toggle");
+function setMenuOpen(open){
+    uiPanel.classList.toggle("collapsed", !open);
+    menuToggleBtn.classList.toggle("with-menu-open", open);
+    localStorage.setItem("pbt_menu_open", open ? "1" : "0");
+}
+menuToggleBtn.onclick = () => setMenuOpen(uiPanel.classList.contains("collapsed"));
+
+// ---------- UI Controls ----------
+document.getElementById("new-box").onclick = () => { appMode === 'draw' ? generateDrawTarget() : generate(); };
+document.getElementById("fullscreen").onclick = () => {
+    if (document.fullscreenElement) document.exitFullscreen();
+    else app.requestFullscreen();
+};
+
+document.getElementById("same-persp").onclick = () => { samePerspective = true; document.getElementById("same-persp").classList.add("active"); document.getElementById("diff-persp").classList.remove("active"); generate(); };
+document.getElementById("diff-persp").onclick = () => { samePerspective = false; document.getElementById("diff-persp").classList.add("active"); document.getElementById("same-persp").classList.remove("active"); generate(); };
+
+document.querySelectorAll("#mode-buttons button").forEach(b => b.onclick = () => { document.querySelectorAll("#mode-buttons button").forEach(x=>x.classList.remove("active")); b.classList.add("active"); mode = +b.dataset.mode; generate(); });
+document.querySelectorAll("#cubes-buttons button").forEach(b => b.onclick = () => { document.querySelectorAll("#cubes-buttons button").forEach(x=>x.classList.remove("active")); b.classList.add("active"); numCubes = +b.dataset.cubes; generate(); });
+document.querySelectorAll("#duration-buttons button").forEach(b => b.onclick = () => { document.querySelectorAll("#duration-buttons button").forEach(x=>x.classList.remove("active")); b.classList.add("active"); timerDuration = +b.dataset.sec * 1000; if(timerEnabled) nextTime = Date.now() + timerDuration; });
+
+document.getElementById("toggle-timer").onclick = () => { timerEnabled = !timerEnabled; updateLanguage(); };
+document.getElementById("reset-count").onclick = () => {
+    const t = translations[lang];
+    if(confirm(lang==='ru' ? "Сбросить счётчик и статистику?" : "Reset counter and stats?")) {
+        boxCount=0;
+        document.getElementById("count").textContent="0";
+        stats = { dates:{}, total:0, lastActiveDate:null, streak:0 };
+        saveStats();
+        renderStats();
+    }
+};
+document.getElementById("lang-toggle").onclick = () => { lang = lang === 'ru' ? 'en' : 'ru'; document.getElementById("lang-toggle").textContent = lang.toUpperCase(); updateLanguage(); };
+document.getElementById("toggle-help").onclick = () => {
+    const h = document.getElementById("help");
+    const t = translations[lang];
+    const willShow = h.style.display === "none";
+    h.style.display = willShow ? "block" : "none";
+    document.getElementById("toggle-help").textContent = willShow ? t.hideInstructions : t.showInstructions;
+};
+
+// ---------- Theme & colors ----------
+function setTheme(light){
+    document.body.classList.toggle("light", light);
+    localStorage.setItem("pbt_theme", light ? "light" : "dark");
+    const t = translations[lang];
+    document.getElementById("theme-toggle").textContent = light ? t.darkTheme : t.lightTheme;
+    redrawUserStrokes();
+}
+document.getElementById("theme-toggle").onclick = () => setTheme(!document.body.classList.contains("light"));
+
+function applyColors(){
+    document.documentElement.style.setProperty('--accent', document.getElementById("color-accent").value);
+    cubeColors = [document.getElementById("color-cube1").value, document.getElementById("color-cube2").value, document.getElementById("color-cube3").value];
+    targetColor = document.getElementById("color-target").value;
+    saveColors();
+}
+["color-accent","color-cube1","color-cube2","color-cube3","color-target"].forEach(id => {
+    document.getElementById(id).addEventListener("input", applyColors);
+});
+
+function saveColors(){
+    localStorage.setItem("pbt_colors", JSON.stringify({
+        accent: document.getElementById("color-accent").value,
+        cube1: document.getElementById("color-cube1").value,
+        cube2: document.getElementById("color-cube2").value,
+        cube3: document.getElementById("color-cube3").value,
+        target: document.getElementById("color-target").value
+    }));
+}
+function loadColors(){
+    try{
+        const c = JSON.parse(localStorage.getItem("pbt_colors"));
+        if(!c) return;
+        document.getElementById("color-accent").value = c.accent || "#0066ff";
+        document.getElementById("color-cube1").value = c.cube1 || "#ffffff";
+        document.getElementById("color-cube2").value = c.cube2 || "#00ddff";
+        document.getElementById("color-cube3").value = c.cube3 || "#ffaa00";
+        document.getElementById("color-target").value = c.target || "#ff3366";
+        applyColors();
+    }catch(e){}
+}
+
+// ---------- Stats / streak ----------
+let stats = { dates:{}, total:0, lastActiveDate:null, streak:0 };
+
+function todayKey(){
+    const d = new Date();
+    return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+}
+function loadStats(){
+    try {
+        const s = JSON.parse(localStorage.getItem("pbt_stats"));
+        if(s) stats = s;
+    } catch(e){}
+}
+function saveStats(){ localStorage.setItem("pbt_stats", JSON.stringify(stats)); }
+
+function recordCubeDrawn(){
+    boxCount++;
+    document.getElementById("count").textContent = boxCount;
+
+    const today = todayKey();
+    const isFirstToday = !stats.dates[today];
+    stats.dates[today] = (stats.dates[today] || 0) + 1;
+    stats.total += 1;
+
+    if(isFirstToday){
+        if(stats.lastActiveDate){
+            const prev = new Date(stats.lastActiveDate);
+            const cur = new Date(today);
+            const diffDays = Math.round((cur - prev) / 86400000);
+            if(diffDays === 1) stats.streak += 1;
+            else if(diffDays > 1) stats.streak = 1;
+            // diffDays === 0 shouldn't happen since isFirstToday
+        } else {
+            stats.streak = 1;
+        }
+        stats.lastActiveDate = today;
+    }
+    saveStats();
+    renderStats();
+}
+function renderStats(){
+    const today = todayKey();
+    document.getElementById("stat-today").textContent = stats.dates[today] || 0;
+    document.getElementById("stat-total").textContent = stats.total;
+    document.getElementById("stat-streak").textContent = stats.streak;
+}
+
+// ---------- i18n ----------
+function updateLanguage() {
+    const t = translations[lang];
+    document.querySelectorAll("[data-i18n]").forEach(el => {
+        const key = el.getAttribute("data-i18n");
+        if(t[key]) el.textContent = t[key];
     });
-});
+    document.getElementById("title").textContent = t.title;
+    document.getElementById("desc").textContent = t.desc;
+    document.getElementById("toggle-timer").textContent = timerEnabled ? t.disableTimer : t.enableTimer;
+    updateFreeRotBtn();
+    const light = document.body.classList.contains("light");
+    document.getElementById("theme-toggle").textContent = light ? t.darkTheme : t.lightTheme;
+    const helpVisible = document.getElementById("help").style.display === "block";
+    document.getElementById("toggle-help").textContent = helpVisible ? t.hideInstructions : t.showInstructions;
+    document.getElementById("menu-toggle").title = t.menuToggle;
+}
 
-document.querySelectorAll("#duration-buttons button").forEach(btn => {
-    btn.addEventListener("click", () => {
-        document.querySelectorAll("#duration-buttons button").forEach(b => b.classList.remove("active"));
-        btn.classList.add("active");
-        timerDuration = parseInt(btn.dataset.sec) * 1000;
-        if (timerEnabled) nextTime = Date.now() + timerDuration;
-    });
-});
-
-document.getElementById("toggle-timer").addEventListener("click", () => {
-    timerEnabled = !timerEnabled;
-    const btn = document.getElementById("toggle-timer");
-    btn.textContent = timerEnabled ? "⏸ Отключить таймер" : "▶ Включить таймер";
-});
-
-document.getElementById("pause-btn").addEventListener("click", () => {
-    if (timerEnabled) isPaused = !isPaused;
-});
-
-// Клавиатура (для ПК)
+// ---------- Keyboard ----------
 document.addEventListener("keydown", e => {
-    if (e.code === "Space" || e.key.toLowerCase() === "n") generate();
-    if (e.key === "1" || e.key === "2" || e.key === "3") {
-        mode = parseInt(e.key);
-        document.querySelectorAll("#mode-buttons button").forEach(b => {
-            b.classList.toggle("active", parseInt(b.dataset.mode) === mode);
-        });
-        generate();
-    }
-    if (e.key.toLowerCase() === "t") {
-        if (timerEnabled) isPaused = !isPaused;
-    }
+    if (e.target.tagName === "INPUT") return;
+    if (e.code === "Space" || e.key.toLowerCase() === "n") { e.preventDefault(); appMode === 'draw' ? generateDrawTarget() : generate(); }
+    if (e.key.toLowerCase() === "f") { document.fullscreenElement ? document.exitFullscreen() : app.requestFullscreen(); }
+    if (e.key.toLowerCase() === "t" && timerEnabled) isPaused = !isPaused;
+    if (e.key.toLowerCase() === "r") { manualYaw = 0; manualPitch = 0; cameraZoom = 1; }
+    if (e.key.toLowerCase() === "m") { setMenuOpen(uiPanel.classList.contains("collapsed")); }
 });
+
+// ---------- Settings persistence ----------
+function saveSettings(){
+    localStorage.setItem("pbt_settings", JSON.stringify({
+        lang, mode, numCubes, samePerspective, timerEnabled, timerDuration,
+        freeRotation, previewDuration, appMode
+    }));
+}
+function loadSettings(){
+    let s;
+    try { s = JSON.parse(localStorage.getItem("pbt_settings")); } catch(e){ s = null; }
+    if(!s) return;
+
+    if(s.lang){ lang = s.lang; document.getElementById("lang-toggle").textContent = lang.toUpperCase(); }
+    if(s.mode){
+        mode = s.mode;
+        document.querySelectorAll("#mode-buttons button, #mode-buttons-draw button").forEach(b => b.classList.toggle("active", +b.dataset.mode === mode));
+    }
+    if(s.numCubes){
+        numCubes = s.numCubes;
+        document.querySelectorAll("#cubes-buttons button").forEach(b => b.classList.toggle("active", +b.dataset.cubes === numCubes));
+    }
+    if(typeof s.samePerspective === "boolean"){
+        samePerspective = s.samePerspective;
+        document.getElementById("same-persp").classList.toggle("active", samePerspective);
+        document.getElementById("diff-persp").classList.toggle("active", !samePerspective);
+    }
+    if(typeof s.timerEnabled === "boolean") timerEnabled = s.timerEnabled;
+    if(s.timerDuration){
+        timerDuration = s.timerDuration;
+        document.querySelectorAll("#duration-buttons button").forEach(b => b.classList.toggle("active", (+b.dataset.sec*1000) === timerDuration));
+    }
+    if(typeof s.freeRotation === "boolean") freeRotation = s.freeRotation;
+    if(s.previewDuration){
+        previewDuration = s.previewDuration;
+        document.querySelectorAll("#preview-buttons button").forEach(b => b.classList.toggle("active", (+b.dataset.sec*1000) === previewDuration));
+    }
+    if(s.appMode) appMode = s.appMode;
+}
+
+// ---------- Init ----------
+loadStats();
+loadColors();
+loadSettings();
+if(localStorage.getItem("pbt_theme") === "light") setTheme(true); else setTheme(false);
+setMenuOpen(localStorage.getItem("pbt_menu_open") !== "0");
+updateFreeRotBtn();
+if(appMode === 'draw'){ setAppMode('draw'); } else { setAppMode('practice'); }
 
 generate();
 draw();
+updateLanguage();
+renderStats();
+
+// Persist settings whenever relevant controls change
+document.querySelectorAll("#mode-buttons button, #mode-buttons-draw button, #cubes-buttons button, #duration-buttons button, #preview-buttons button, #same-persp, #diff-persp, #toggle-timer, #tab-practice, #tab-draw, #lang-toggle").forEach(el => {
+    el.addEventListener("click", saveSettings);
+});
 </script>
 </body>
 </html>
+
