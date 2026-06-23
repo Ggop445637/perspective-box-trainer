@@ -185,6 +185,26 @@
     .dock-icon:hover { background: rgba(255,255,255,0.1); }
     body.light .dock-icon:hover { background: rgba(0,0,0,0.06); }
 
+    /* SOCIAL LINKS POPUP */
+    #social-wrap { position: relative; }
+    #social-popup {
+        position: absolute; top: calc(100% + 8px); right: 0;
+        display: flex; flex-direction: column; gap: 4px;
+        padding: 6px; min-width: 168px;
+        z-index: 20;
+    }
+    #social-popup.hidden { display: none; }
+    .social-link {
+        display: flex; align-items: center; gap: 10px;
+        padding: 8px 10px; border-radius: 10px;
+        color: var(--text); text-decoration: none;
+        font-size: 0.85em; font-weight: 600;
+        background: transparent;
+    }
+    .social-link:hover { background: rgba(255,255,255,0.08); }
+    body.light .social-link:hover { background: rgba(0,0,0,0.05); }
+    .social-link svg { width: 18px; height: 18px; flex-shrink: 0; fill: currentColor; }
+
     /* BIG GREEN TIMER */
     #timer-display {
         position: fixed;
@@ -394,6 +414,19 @@
     <button id="lang-toggle" class="dock-icon">EN</button>
     <button id="theme-toggle" class="dock-icon" title="Сменить тему">🌓</button>
     <button id="fullscreen" class="dock-icon" title="Весь экран">⛶</button>
+    <div id="social-wrap">
+        <button id="social-toggle" class="dock-icon" title="Мои соцсети">🔗</button>
+        <div id="social-popup" class="glass-panel hidden">
+            <a class="social-link" href="https://t.me/Ne_Mocrui" target="_blank" rel="noopener noreferrer">
+                <svg viewBox="0 0 24 24"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.568 8.16-1.61 7.59c-.122.546-.439.68-.89.424l-2.46-1.812-1.187 1.142c-.131.131-.241.241-.494.241l.177-2.5 4.55-4.11c.198-.176-.043-.274-.305-.099l-5.62 3.54-2.42-.756c-.527-.165-.537-.527.11-.78l9.46-3.646c.438-.165.821.107.689.766z"/></svg>
+                <span>Telegram</span>
+            </a>
+            <a class="social-link" href="https://x.com/Mocrui" target="_blank" rel="noopener noreferrer">
+                <svg viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+                <span>X (Twitter)</span>
+            </a>
+        </div>
+    </div>
     <button id="toggle-help" class="dock-icon" title="Справка">?</button>
 </div>
 
@@ -447,6 +480,7 @@
         </div>
 
         <button id="toggle-free" class="btn btn-secondary" style="margin-top:8px;" data-i18n="freeRotOff">Вращение: Выкл</button>
+        <button id="toggle-vp" class="btn btn-secondary" data-i18n="vpOff">Перспектива: Выкл</button>
         <button id="new-box" class="btn btn-primary" style="margin-top:4px;" data-i18n="newPose">Генерировать (Space)</button>
     </div>
 
@@ -478,6 +512,19 @@
             <button data-sec="3" class="active">3s</button>
             <button data-sec="5">5s</button>
         </div>
+
+        <button id="toggle-autocheck" class="btn btn-secondary" style="margin-top:8px;" data-i18n="autoCheckOff">Авто-проверка: Выкл</button>
+        <div id="autocheck-duration-wrap" class="hidden">
+            <span class="label" style="margin-top:6px;" data-i18n="drawTimer">Время на рисование:</span>
+            <div class="segmented" id="autocheck-duration-buttons">
+                <button data-sec="5">5s</button>
+                <button data-sec="10" class="active">10s</button>
+                <button data-sec="15">15s</button>
+                <button data-sec="30">30s</button>
+            </div>
+        </div>
+
+        <button id="toggle-vp-draw" class="btn btn-secondary" style="margin-top:6px;" data-i18n="vpOff">Перспектива: Выкл</button>
     </div>
 
     <details>
@@ -588,9 +635,18 @@ let viewScale = 1;
 let appMode = 'practice';
 let dragging = false, lastX = 0, lastY = 0, pointerMoved = false;
 
+// Perspective guide overlay (vanishing points + lines to them), toggled from the UI.
+let showPerspective = false;
+
 let drawTarget = null, checked = false;
+let nextDrawTime = 0; // when checked, auto-advance to a new shape after AUTO_NEXT_DELAY ms
+const AUTO_NEXT_DELAY = 5000;
 let userStrokes = [], currentStroke = null;
 let showingPreview = false, previewEndTime = 0, previewDuration = 3000;
+
+// Auto-check: optional timer that auto-triggers "Check" after a chosen
+// drawing interval, mirroring the practice-mode generate() timer.
+let autoCheckEnabled = false, autoCheckDuration = 10000, autoCheckDeadline = 0;
 
 const edges = [[0,1],[1,2],[2,3],[3,0],[4,5],[5,6],[6,7],[7,4],[0,4],[1,5],[2,6],[3,7]];
 const faces = [[0,1,2,3],[5,4,7,6],[0,4,5,1],[3,2,6,7],[0,3,7,4],[1,5,6,2]];
@@ -601,6 +657,8 @@ const translations = {
         cubes:"Объекты:", timer:"Интервал:", m1:"Простой", m2:"Угловой", m3:"Динамика",
         same:"Общая", diff:"Разная", disableTimer:"Отключить таймер", enableTimer:"Включить таймер",
         freeRotOff:"Вращение: Выкл", freeRotOn:"Вращение: Вкл", drawHelp:"Запомните фигуру, начертите её проекцию по памяти и нажмите «Проверить».",
+        vpOff:"Перспектива: Выкл", vpOn:"Перспектива: Вкл",
+        autoCheckOff:"Авто-проверка: Выкл", autoCheckOn:"Авто-проверка: Вкл", drawTimer:"Время на рисование:",
         clear:"Стереть", check:"Проверить", newTarget:"Новая фигура", newPose:"Генерировать (Space)",
         appearance:"Палитра и опции", cubesDrawn:"Отрисовано сессий:", statToday:"Сегодня", statTotal:"Всего",
         statStreak:"Серия", hotkeysTitle:"Горячие клавиши", drawHint:"Чертите контур мышью или касанием",
@@ -615,6 +673,8 @@ const translations = {
         cubes:"Objects:", timer:"Interval:", m1:"Basic", m2:"Angled", m3:"Dynamic",
         same:"Shared", diff:"Individual", disableTimer:"Disable Timer", enableTimer:"Enable Timer",
         freeRotOff:"Rotation: Off", freeRotOn:"Rotation: On", drawHelp:"Memorize the object, sketch its projection from memory, and press Check.",
+        vpOff:"Perspective: Off", vpOn:"Perspective: On",
+        autoCheckOff:"Auto-check: Off", autoCheckOn:"Auto-check: On", drawTimer:"Drawing time:",
         clear:"Clear", check:"Check", newTarget:"New Object", newPose:"Generate (Space)",
         appearance:"Palette & Options", cubesDrawn:"Completed sessions:", statToday:"Today", statTotal:"Total",
         statStreak:"Streak", hotkeysTitle:"Hotkeys", drawHint:"Sketch contour using mouse or touch",
@@ -717,6 +777,142 @@ function rotateDir(v, c) {
     v = rotY(v, manualYaw);
     v = rotX(v, manualPitch);
     return v;
+}
+
+// ── Perspective guides: vanishing points + lines to them ──────────────────
+//
+// For a direction vector d in view-space (after object + camera rotation),
+// the screen point that an infinitely-distant point along that direction
+// projects to is the vanishing point for that direction. Using the same
+// projection formula as projectPoint — x = cx + v.x * f, where f = focal/v.z —
+// and letting the distance along d go to infinity, the camera-offset term
+// drops out and we're left with: vp = center + (d.x, d.y) * (focal / d.z).
+// This is exact for true linear perspective (which is what projectCube /
+// projectCylinder already use), so the lines drawn here will always pass
+// exactly through the real edges of the shape on screen.
+function vanishingPoint(dir, c) {
+    const v = rotateDir(dir, c);
+    if (Math.abs(v[2]) < 1e-6) return null;
+    const f = 820 * viewScale;
+    const k = f / v[2];
+    return { x: canvas.width / 2 + v[0] * k, y: canvas.height / 2 + v[1] * k };
+}
+
+// How much an axis's vanishing point actually converges on screen depends on
+// the *angle* between that axis and the view plane, not on where the point
+// numerically lands — division by a near-zero v.z can place a point either
+// just off-screen or absurdly far away for very similar small angles, so
+// screen position alone is an unreliable signal. The angle is a direct,
+// stable measure: 90° means the axis points straight at the camera (strong,
+// nearby convergence — like classic 1-point perspective's depth axis); near
+// 0° means the axis runs parallel to the screen (edges stay visually
+// parallel, no usable vanishing point — e.g. a box's width/height in a
+// head-on "Simple" pose). This is what makes "Simple" mode show 1 point,
+// "Angled" show 2, and "Dynamic" show 3 — driven by the actual current
+// angle rather than hard-coded per difficulty level.
+const VP_MIN_CONVERGENCE_DEG = 12;
+
+function axisConvergenceDeg(dir, c) {
+    const v = rotateDir(dir, c);
+    const len = Math.hypot(v[0], v[1], v[2]);
+    if (len < 1e-9) return 0;
+    return Math.asin(Math.min(1, Math.abs(v[2]) / len)) * 180 / Math.PI;
+}
+
+// The cube/cylinder's three local axes (width, height, depth) each define one
+// vanishing point. Returns up to 3 {x,y,axis} points (axis kept for color-coding),
+// keeping only the axes that are genuinely converging at the current angle —
+// so a head-on "1-point" pose shows just one point, an angled "2-point" pose
+// shows two, and so on, matching classical perspective terminology.
+function getVanishingPoints(c) {
+    const dirs = [
+        { axis: 'x', d: [1, 0, 0] },
+        { axis: 'y', d: [0, 1, 0] },
+        { axis: 'z', d: [0, 0, 1] }
+    ];
+    const pts = [];
+    for (const { axis, d } of dirs) {
+        if (axisConvergenceDeg(d, c) < VP_MIN_CONVERGENCE_DEG) continue;
+        const vp = vanishingPoint(d, c);
+        if (vp) pts.push({ axis, ...vp });
+    }
+    return pts;
+}
+
+const VP_AXIS_COLOR = { x: '#22c55e', y: '#a855f7', z: '#ef4444' };
+
+// Draws faint construction lines from a chosen set of screen points out to
+// each vanishing point, plus a marker at the vanishing point itself. `proj`
+// is an array of already-projected {x,y} vertices belonging to edges that run
+// along that axis; `lineSources` maps axis -> list of proj-vertex pairs whose
+// edge direction is that axis, so the guide line passes exactly through real
+// geometry instead of floating arbitrarily.
+function drawPerspectiveGuides(c, edgeSourcesByAxis) {
+    const vps = getVanishingPoints(c);
+    if (!vps.length) return;
+
+    ctx.save();
+    for (const vp of vps) {
+        const col = VP_AXIS_COLOR[vp.axis];
+        const sources = edgeSourcesByAxis[vp.axis] || [];
+
+        // Construction lines: extend each real edge of the shape out to the VP.
+        ctx.globalAlpha = 0.55;
+        ctx.lineWidth = 1.2;
+        ctx.setLineDash([5, 5]);
+        ctx.strokeStyle = col;
+        for (const [a, b] of sources) {
+            // Pick the endpoint closer to the vanishing point as the start,
+            // so the dashed line visibly runs "into the distance" past the
+            // far vertex rather than just connecting two arbitrary points.
+            const dA = Math.hypot(a.x - vp.x, a.y - vp.y);
+            const dB = Math.hypot(b.x - vp.x, b.y - vp.y);
+            const near = dA < dB ? a : b, far = dA < dB ? b : a;
+            ctx.beginPath();
+            ctx.moveTo(near.x, near.y);
+            ctx.lineTo(vp.x, vp.y);
+            ctx.stroke();
+            void far;
+        }
+
+        // Vanishing point marker.
+        ctx.setLineDash([]);
+        ctx.globalAlpha = 0.95;
+        ctx.beginPath();
+        ctx.arc(vp.x, vp.y, 5, 0, Math.PI * 2);
+        ctx.fillStyle = col;
+        ctx.fill();
+        ctx.lineWidth = 1.5;
+        ctx.strokeStyle = getComputedStyle(document.body).getPropertyValue('--bg').trim();
+        ctx.stroke();
+    }
+    ctx.restore();
+    ctx.globalAlpha = 1;
+}
+
+// Groups a projected cube's 12 edges by which local axis (x/y/z) they run
+// along, using the same `edges` index pairs used for drawing the cube itself.
+// edges = [[0,1],[1,2],[2,3],[3,0], [4,5],[5,6],[6,7],[7,4], [0,4],[1,5],[2,6],[3,7]]
+//          ^-- z-axis loop (near face) --^  ^-- z-axis loop (far face) --^  ^-- x-axis connectors --^
+// Vertex layout from getLocalBaseVerts: 0=(-x,-y,-z) 1=(x,-y,-z) 2=(x,y,-z) 3=(-x,y,-z)
+//                                        4=(-x,-y,z)  5=(x,-y,z)  6=(x,y,z)  7=(-x,y,z)
+function cubeEdgeSourcesByAxis(proj) {
+    return {
+        x: [[0,1],[3,2],[4,5],[7,6]].map(([a,b]) => [proj[a], proj[b]]),
+        y: [[0,3],[1,2],[4,7],[5,6]].map(([a,b]) => [proj[a], proj[b]]),
+        z: [[0,4],[1,5],[2,6],[3,7]].map(([a,b]) => [proj[a], proj[b]])
+    };
+}
+
+// For a cylinder, only the height axis (its local y) gives a useful, visually
+// stable vanishing point in this overlay — the radial "x/z" directions change
+// per-segment around the rim, so a single global x/z VP wouldn't track any
+// real edge on screen. We use the silhouette verticals (the same lines
+// drawCylinderWire treats as the outline) as the source edges for the y-axis.
+function cylinderEdgeSourcesByAxis(cyl) {
+    const { top, bottom, silhouetteIndices } = cyl;
+    const ySources = silhouetteIndices.map(idx => [top[idx], bottom[idx]]);
+    return { y: ySources };
 }
 
 // Point-in-polygon test (ray casting) — used to tell whether a point along
@@ -949,21 +1145,37 @@ function drawCylinderWire(cyl, color, alpha = 1, occlude = false) {
         return width > 0 ? Math.min(width, heightEl) / Math.max(width, heightEl) : 0;
     })();
 
-    const isNearTopView = maxHeight < 28 || 
-                         (ellipseRatio > 0.85 && avgHeight < 55) || 
-                         avgHeight < 16;
+    // These thresholds decide whether the cylinder looks close enough to a
+    // top/bottom view that drawing its side silhouette lines would look wrong.
+    // They compare measurements that are in *screen pixels* (avgHeight,
+    // maxHeight, length below), but viewScale shrinks everything uniformly on
+    // small viewports (phones) — on a narrow screen viewScale can be ~0.4–0.6,
+    // so a perfectly normal 3/4 cylinder view ends up with a small pixel
+    // avgHeight and incorrectly trips the "near top-down" thresholds, hiding
+    // its side lines (the bug seen on mobile: only the two rim ellipses show,
+    // no connecting verticals). Normalizing by viewScale converts the
+    // comparison back into the original world-space scale these constants
+    // were tuned at, so the result is independent of viewport size.
+    const vs = Math.max(viewScale, 1e-3);
+    const avgHeightN = avgHeight / vs;
+    const maxHeightN = maxHeight / vs;
+
+    const isNearTopView = maxHeightN < 28 || 
+                         (ellipseRatio > 0.85 && avgHeightN < 55) || 
+                         avgHeightN < 16;
 
     for (const idx of silhouetteIndices) {
         const dx = top[idx].x - bottom[idx].x;
         const dy = top[idx].y - bottom[idx].y;
         const length = Math.sqrt(dx*dx + dy*dy);
+        const lengthN = length / vs;
 
-        if (length < 15) continue;
+        if (lengthN < 15) continue;
 
         if (isNearTopView) continue;
 
         const angle = Math.abs(Math.atan2(dy, dx) * (180 / Math.PI));
-        if (angle > 60 && angle < 120 && avgHeight < 40) continue;
+        if (angle > 60 && angle < 120 && avgHeightN < 40) continue;
 
         ctx.beginPath();
         ctx.moveTo(top[idx].x, top[idx].y);
@@ -982,16 +1194,23 @@ function draw() {
             if(c.type === 'cylinder'){
                 const cyl = projectCylinder(c);
                 const all = cyl.top.concat(cyl.bottom);
-                return { shape: cyl, type:'cylinder', color: cubeColors[idx % cubeColors.length], z: all.reduce((s,v)=>s+v.z,0)/all.length };
+                return { shape: cyl, type:'cylinder', cubeRef: c, color: cubeColors[idx % cubeColors.length], z: all.reduce((s,v)=>s+v.z,0)/all.length };
             }
             const p = projectCube(c);
-            return { shape: p, type:'cube', color: cubeColors[idx % cubeColors.length], z: p.reduce((s,v)=>s+v.z,0)/p.length };
+            return { shape: p, type:'cube', cubeRef: c, color: cubeColors[idx % cubeColors.length], z: p.reduce((s,v)=>s+v.z,0)/p.length };
         }).sort((a,b) => b.z - a.z);
 
         items.forEach((item, i) => {
             if(item.type === 'cylinder') drawCylinderWire(item.shape, item.color, undefined, i > 0);
             else drawCubeWire(item.shape, item.color, undefined, i > 0);
         });
+
+        if(showPerspective){
+            items.forEach(item => {
+                if(item.type === 'cylinder') drawPerspectiveGuides(item.cubeRef, cylinderEdgeSourcesByAxis(item.shape));
+                else drawPerspectiveGuides(item.cubeRef, cubeEdgeSourcesByAxis(item.shape));
+            });
+        }
 
         if(timerEnabled){
             if(!isPaused){
@@ -1006,18 +1225,47 @@ function draw() {
         }
     } else {
         if(showingPreview && drawTarget) {
-            if(drawTarget.type === 'cylinder') drawCylinderWire(projectCylinder(drawTarget), cubeColors[0]);
-            else drawCubeWire(projectCube(drawTarget), cubeColors[0]);
+            const isCyl = drawTarget.type === 'cylinder';
+            const shape = isCyl ? projectCylinder(drawTarget) : projectCube(drawTarget);
+            if(isCyl) drawCylinderWire(shape, cubeColors[0]);
+            else drawCubeWire(shape, cubeColors[0]);
+            if(showPerspective){
+                drawPerspectiveGuides(drawTarget, isCyl ? cylinderEdgeSourcesByAxis(shape) : cubeEdgeSourcesByAxis(shape));
+            }
             const remPreview = Math.max(0, Math.ceil((previewEndTime - Date.now())/1000));
             timerDisplay.textContent = remPreview + "s";
             timerDisplay.classList.toggle("urgent", remPreview <= 3);
-            if(Date.now() > previewEndTime){ showingPreview = false; drawHint.style.opacity = 0.4; drawHint.textContent = translations[lang].drawHint; }
+            if(Date.now() > previewEndTime){
+                showingPreview = false; drawHint.style.opacity = 0.4; drawHint.textContent = translations[lang].drawHint;
+                if(autoCheckEnabled) autoCheckDeadline = Date.now() + autoCheckDuration;
+            }
         } else {
-            timerDisplay.textContent = "";
-            timerDisplay.classList.remove("urgent");
             if(checked && drawTarget){
-                if(drawTarget.type === 'cylinder') drawCylinderWire(projectCylinder(drawTarget), targetColor, 0.85);
-                else drawCubeWire(projectCube(drawTarget), targetColor, 0.85);
+                const isCyl = drawTarget.type === 'cylinder';
+                const shape = isCyl ? projectCylinder(drawTarget) : projectCube(drawTarget);
+                if(isCyl) drawCylinderWire(shape, targetColor, 0.85);
+                else drawCubeWire(shape, targetColor, 0.85);
+                if(showPerspective){
+                    drawPerspectiveGuides(drawTarget, isCyl ? cylinderEdgeSourcesByAxis(shape) : cubeEdgeSourcesByAxis(shape));
+                }
+                if(nextDrawTime){
+                    const remNext = Math.max(0, Math.ceil((nextDrawTime - Date.now())/1000));
+                    timerDisplay.textContent = remNext + "s";
+                    timerDisplay.classList.toggle("urgent", remNext <= 3);
+                    if(Date.now() > nextDrawTime) generateDrawTarget();
+                } else {
+                    timerDisplay.textContent = "";
+                    timerDisplay.classList.remove("urgent");
+                }
+            } else if(drawTarget && autoCheckDeadline){
+                // Drawing phase, not yet checked: count down to the auto-check trigger.
+                const remDraw = Math.max(0, Math.ceil((autoCheckDeadline - Date.now())/1000));
+                timerDisplay.textContent = remDraw + "s";
+                timerDisplay.classList.toggle("urgent", remDraw <= 3);
+                if(Date.now() > autoCheckDeadline) performCheck();
+            } else {
+                timerDisplay.textContent = "";
+                timerDisplay.classList.remove("urgent");
             }
         }
     }
@@ -1026,41 +1274,46 @@ function draw() {
 
 function generateDrawTarget(){
     hideAccuracy();
+    nextDrawTime = 0;
+    autoCheckDeadline = 0;
     manualYaw = 0; manualPitch = 0; cameraDist = 820;
     const angles = randomAngles(mode);
-const mobileScale = window.innerWidth < 700 ? 1.6 : 1;
+    // Note: no extra mobile multiplier here — viewScale (see updateViewScale)
+    // already shrinks the whole projected scene to fit small screens, so an
+    // additional size boost on top of that made shapes render too large to
+    // comfortably trace on phones. Base sizes are also slightly smaller than
+    // practice mode's, leaving more margin around the shape for drawing.
 
-if(shapeType === 'cylinder'){
-    const radius = (80 + Math.random()*100) * mobileScale;
-    const halfH = (100 + Math.random()*130) * mobileScale;
+    if(shapeType === 'cylinder'){
+        const radius = 65 + Math.random()*75;
+        const halfH = 80 + Math.random()*100;
 
-    drawTarget = {
-        type:'cylinder',
-        sx:radius,
-        sy:halfH,
-        sz:radius,
-        ox:0,
-        oy:0,
-        oz:0,
-        localYaw: angles.yaw,
-        localPitch: angles.pitch
-    };
-}
-else{
-    const sx = (90 + Math.random()*110) * mobileScale;
-    const sy = (90 + Math.random()*110) * mobileScale;
-    const sz = (90 + Math.random()*110) * mobileScale;
+        drawTarget = {
+            type:'cylinder',
+            sx:radius,
+            sy:halfH,
+            sz:radius,
+            ox:0,
+            oy:0,
+            oz:0,
+            localYaw: angles.yaw,
+            localPitch: angles.pitch
+        };
+    } else {
+        const sx = 65 + Math.random()*85;
+        const sy = 65 + Math.random()*85;
+        const sz = 65 + Math.random()*85;
 
-    drawTarget = {
-        type:'cube',
-        sx, sy, sz,
-        ox:0,
-        oy:0,
-        oz:0,
-        localYaw: angles.yaw,
-        localPitch: angles.pitch
-    };
-}
+        drawTarget = {
+            type:'cube',
+            sx, sy, sz,
+            ox:0,
+            oy:0,
+            oz:0,
+            localYaw: angles.yaw,
+            localPitch: angles.pitch
+        };
+    }
     checked = false; userStrokes = []; redrawUserStrokes();
     showingPreview = true; previewEndTime = Date.now() + previewDuration;
     drawHint.textContent = translations[lang].memorize; drawHint.style.opacity = 0.8;
@@ -1246,14 +1499,18 @@ function showAccuracy(pct) {
 }
 function hideAccuracy() { accuracyBadge.classList.add('hidden'); }
 
-document.getElementById("draw-clear").onclick = () => { if(showingPreview) return; userStrokes = []; checked = false; redrawUserStrokes(); drawHint.style.opacity = 0.4; hideAccuracy(); };
-document.getElementById("draw-check").onclick = () => {
+document.getElementById("draw-clear").onclick = () => { if(showingPreview) return; userStrokes = []; checked = false; nextDrawTime = 0; redrawUserStrokes(); drawHint.style.opacity = 0.4; hideAccuracy(); };
+
+function performCheck(){
     if(showingPreview || checked) return;
     checked = true; recordCubeDrawn(); redrawUserStrokes();
+    nextDrawTime = Date.now() + AUTO_NEXT_DELAY;
+    autoCheckDeadline = 0;
     // Small delay so the target overlay renders first (one rAF cycle)
     requestAnimationFrame(() => { showAccuracy(computeAccuracy()); });
-};
-document.getElementById("draw-new").onclick = generateDrawTarget;
+}
+document.getElementById("draw-check").onclick = performCheck;
+document.getElementById("draw-new").onclick = () => { nextDrawTime = 0; autoCheckDeadline = 0; generateDrawTarget(); };
 
 function setMode(newMode) {
     mode = newMode;
@@ -1297,6 +1554,40 @@ document.getElementById("same-persp").onclick = () => { samePerspective=true; do
 document.getElementById("diff-persp").onclick = () => { samePerspective=false; document.getElementById("diff-persp").classList.add("active"); document.getElementById("same-persp").classList.remove("active"); generate(); };
 
 document.getElementById("toggle-free").onclick = () => { freeRotation = !freeRotation; document.getElementById("toggle-free").textContent = translations[lang][freeRotation?'freeRotOn':'freeRotOff']; document.getElementById("toggle-free").classList.toggle("btn-primary", freeRotation); canvas.style.touchAction = freeRotation ? 'none' : 'auto'; };
+
+// Two buttons (one per tab) drive the same global flag, so the setting carries
+// over when switching between Practice and Memory Test.
+function setShowPerspective(val){
+    showPerspective = val;
+    const label = translations[lang][showPerspective ? 'vpOn' : 'vpOff'];
+    for (const id of ["toggle-vp", "toggle-vp-draw"]) {
+        const btn = document.getElementById(id);
+        btn.textContent = label;
+        btn.classList.toggle("btn-primary", showPerspective);
+    }
+}
+document.getElementById("toggle-vp").onclick = () => setShowPerspective(!showPerspective);
+document.getElementById("toggle-vp-draw").onclick = () => setShowPerspective(!showPerspective);
+
+function setAutoCheck(val){
+    autoCheckEnabled = val;
+    document.getElementById("toggle-autocheck").textContent = translations[lang][autoCheckEnabled ? 'autoCheckOn' : 'autoCheckOff'];
+    document.getElementById("toggle-autocheck").classList.toggle("btn-primary", autoCheckEnabled);
+    document.getElementById("autocheck-duration-wrap").classList.toggle("hidden", !autoCheckEnabled);
+    // Starting the countdown only makes sense once the preview has ended and
+    // there's a shape on screen to draw; otherwise it'll be set when the
+    // preview finishes (see draw()).
+    if(autoCheckEnabled && drawTarget && !showingPreview && !checked){
+        autoCheckDeadline = Date.now() + autoCheckDuration;
+    } else if(!autoCheckEnabled){
+        autoCheckDeadline = 0;
+    }
+}
+document.getElementById("toggle-autocheck").onclick = () => setAutoCheck(!autoCheckEnabled);
+bindSegmented("autocheck-duration-buttons", b => {
+    autoCheckDuration = +b.dataset.sec * 1000;
+    if(autoCheckEnabled && autoCheckDeadline) autoCheckDeadline = Date.now() + autoCheckDuration;
+});
 document.getElementById("new-box").onclick = () => appMode === 'draw' ? generateDrawTarget() : generate();
 document.getElementById("fullscreen").onclick = () => document.fullscreenElement ? document.exitFullscreen() : app.requestFullscreen();
 
@@ -1316,6 +1607,16 @@ document.getElementById("lang-toggle").onclick = () => { lang = lang==='ru'?'en'
 document.getElementById("theme-toggle").onclick = () => { document.body.classList.toggle("light"); localStorage.setItem("pbt_theme", document.body.classList.contains("light")?"light":"dark"); redrawUserStrokes(); };
 
 document.getElementById("toggle-help").onclick = () => { const m = document.getElementById("help-modal"); m.style.display = m.style.display==="flex" ? "none" : "flex"; };
+
+// Social links popup: toggle on icon click, close on outside click or Escape.
+const socialPopup = document.getElementById("social-popup");
+document.getElementById("social-toggle").onclick = (e) => { e.stopPropagation(); socialPopup.classList.toggle("hidden"); };
+document.addEventListener("click", (e) => {
+    if(!socialPopup.classList.contains("hidden") && !document.getElementById("social-wrap").contains(e.target)){
+        socialPopup.classList.add("hidden");
+    }
+});
+document.addEventListener("keydown", (e) => { if(e.key === "Escape") socialPopup.classList.add("hidden"); });
 document.getElementById("help-modal").onclick = () => document.getElementById("help-modal").style.display = "none";
 
 function applyColors(){
@@ -1405,6 +1706,8 @@ function updateLanguage() {
     const t = translations[lang];
     document.querySelectorAll("[data-i18n]").forEach(el => { if(t[el.dataset.i18n]) el.textContent = t[el.dataset.i18n]; });
     document.getElementById("toggle-free").textContent = t[freeRotation?'freeRotOn':'freeRotOff'];
+    setShowPerspective(showPerspective);
+    document.getElementById("toggle-autocheck").textContent = t[autoCheckEnabled ? 'autoCheckOn' : 'autoCheckOff'];
 }
 
 // ── Orbit drag + pinch zoom (desktop mouse + mobile touch) ───────────────
