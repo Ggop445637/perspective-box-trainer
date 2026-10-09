@@ -7,8 +7,8 @@
 <meta name="description" content="Бесплатный онлайн-тренажёр перспективы: рисуйте кубы и цилиндры в правильной перспективе, тренируйте линии и эллипсы, проверяйте себя по памяти. Для художников и иллюстраторов.">
 <meta name="keywords" content="перспектива, рисование, тренажёр рисования, куб в перспективе, цилиндр в перспективе, drawing trainer, perspective drawing, скетчинг, художник">
 <meta name="robots" content="index, follow">
-<meta name="theme-color" content="#0b0c0f" media="(prefers-color-scheme: dark)">
-<meta name="theme-color" content="#f5f5f2" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0d0d0f" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#f6f5f3" media="(prefers-color-scheme: light)">
 <link rel="canonical" href="https://ggop445637.github.io/perspective-box-trainer/">
 
 <meta property="og:type" content="website">
@@ -20,510 +20,461 @@
 <meta name="twitter:title" content="Perspective Box Trainer — тренажёр перспективы для рисования">
 <meta name="twitter:description" content="Кубы и цилиндры в перспективе, линии и эллипсы, тест по памяти. Прямо в браузере.">
 
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%236366f1' stroke-width='2' stroke-linejoin='round'%3E%3Cpath d='M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z'/%3E%3Cpath d='M3.27 6.96 12 12.01l8.73-5.05M12 22.08V12'/%3E%3C/svg%3E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23ff5c39'/%3E%3Cpath d='M16 7 24 11.5v9L16 25l-8-4.5v-9z M8 11.5 16 16l8-4.5 M16 16v9' fill='none' stroke='white' stroke-width='2' stroke-linejoin='round'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
 <style>
     :root {
-        --bg: #0b0c0f;
-        --surface: rgba(20, 21, 26, 0.82);
-        --surface-solid: #16171c;
-        --surface-2: rgba(255, 255, 255, 0.045);
-        --surface-3: rgba(255, 255, 255, 0.08);
-        --border: rgba(255, 255, 255, 0.08);
-        --border-strong: rgba(255, 255, 255, 0.14);
-        --text: #f4f4f5;
-        --text-dim: #a1a1aa;
-        --text-faint: #6b6b74;
-        --accent: #6366f1;
+        --bg: #0d0d0f;
+        --bg-dot: rgba(255, 255, 255, 0.075);
+        --panel: #151518;
+        --panel-2: #1b1b1f;
+        --panel-3: #26262b;
+        --sunken: #0f0f12;
+        --line: #232328;
+        --line-strong: #313138;
+        --text: #ededf0;
+        --text-2: #a0a0a9;
+        --text-3: #686871;
+        --accent: #ff5c39;
         --on-accent: #ffffff;
-        --success: #22c55e;
-        --warning: #f59e0b;
-        --danger: #ef4444;
-        --shadow: 0 18px 50px -12px rgba(0, 0, 0, 0.6), 0 2px 6px rgba(0, 0, 0, 0.25);
-        --shadow-sm: 0 6px 18px -6px rgba(0, 0, 0, 0.5);
-        --radius: 18px;
-        --radius-sm: 11px;
-        --ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+        --inverse: #ededf0;
+        --on-inverse: #111113;
+        --good: #3ddc97;
+        --warn: #ffb020;
+        --bad: #ff4d5e;
+        --shadow: 0 1px 0 rgba(255,255,255,0.03) inset, 0 8px 24px -12px rgba(0,0,0,0.6);
+        --shadow-pop: 0 30px 70px -20px rgba(0,0,0,0.75), 0 0 0 1px var(--line);
+        --thumb-shadow: 0 1px 2px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.04) inset;
+        --r-lg: 16px;
+        --r-md: 11px;
+        --r-sm: 8px;
+        --out: cubic-bezier(0.16, 1, 0.3, 1);
+        --spring: cubic-bezier(0.34, 1.56, 0.64, 1);
         --safe-b: env(safe-area-inset-bottom, 0px);
         color-scheme: dark;
     }
-
     body.light {
-        --bg: #f5f5f2;
-        --surface: rgba(255, 255, 255, 0.86);
-        --surface-solid: #ffffff;
-        --surface-2: rgba(15, 23, 42, 0.04);
-        --surface-3: rgba(15, 23, 42, 0.075);
-        --border: rgba(15, 23, 42, 0.09);
-        --border-strong: rgba(15, 23, 42, 0.16);
-        --text: #18181b;
-        --text-dim: #55555e;
-        --text-faint: #8d8d96;
-        --shadow: 0 18px 50px -14px rgba(15, 23, 42, 0.22), 0 2px 6px rgba(15, 23, 42, 0.06);
-        --shadow-sm: 0 6px 18px -8px rgba(15, 23, 42, 0.25);
+        --bg: #f6f5f3;
+        --bg-dot: rgba(26, 25, 24, 0.07);
+        --panel: #ffffff;
+        --panel-2: #f6f5f3;
+        --panel-3: #ffffff;
+        --sunken: #efeeeb;
+        --line: #e7e5e1;
+        --line-strong: #d7d4cf;
+        --text: #1a1918;
+        --text-2: #6b6862;
+        --text-3: #a29e97;
+        --inverse: #1a1918;
+        --on-inverse: #ffffff;
+        --shadow: 0 20px 40px -22px rgba(26,25,24,0.22), 0 2px 6px -2px rgba(26,25,24,0.08);
+        --shadow-pop: 0 30px 70px -24px rgba(26,25,24,0.35), 0 0 0 1px var(--line);
+        --thumb-shadow: 0 1px 3px rgba(26,25,24,0.12), 0 0 0 1px rgba(26,25,24,0.06);
         color-scheme: light;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
     html, body { height: 100%; }
     body {
-        background: var(--bg);
-        color: var(--text);
-        font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-        font-size: 15px;
-        line-height: 1.4;
-        overflow: hidden;
-        user-select: none;
-        -webkit-user-select: none;
-        -webkit-tap-highlight-color: transparent;
-        transition: background-color 0.25s ease;
+        background: var(--bg); color: var(--text);
+        font-family: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+        font-feature-settings: "cv11", "ss01", "ss03";
+        font-size: 14px; line-height: 1.45; letter-spacing: -0.006em;
+        overflow: hidden; user-select: none; -webkit-user-select: none;
+        -webkit-font-smoothing: antialiased; -webkit-tap-highlight-color: transparent;
+        transition: background-color 0.4s ease, color 0.4s ease;
     }
-    button, input { font: inherit; color: inherit; }
+    button, input { font: inherit; color: inherit; letter-spacing: inherit; }
     button { cursor: pointer; }
+    .hidden { display: none !important; }
+    .num { font-variant-numeric: tabular-nums; }
 
-    #app { position: fixed; inset: 0; background: var(--bg); }
-
+    #app {
+        position: fixed; inset: 0; background-color: var(--bg);
+        background-image: radial-gradient(var(--bg-dot) 1px, transparent 1.3px);
+        background-size: 24px 24px; background-position: 12px 12px;
+        transition: background-color 0.4s ease;
+    }
+    body.grid-on #app { background-image: none; }
     canvas { display: block; position: absolute; top: 0; left: 0; }
     #draw-cv { cursor: crosshair; touch-action: none; }
     #cv { touch-action: none; }
-    .hidden { display: none !important; }
 
-    .i { width: 18px; height: 18px; flex-shrink: 0; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
-
-    .glass {
-        background: var(--surface);
-        backdrop-filter: blur(20px) saturate(160%);
-        -webkit-backdrop-filter: blur(20px) saturate(160%);
-        border: 1px solid var(--border);
-        box-shadow: var(--shadow);
-    }
-
+    .i { width: 18px; height: 18px; flex-shrink: 0; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+    :focus { outline: none; }
     :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 8px; }
 
-    /* ── ICON BUTTON ───────────────────────────────────────────── */
+    .surface { background: var(--panel); border: 1px solid var(--line); box-shadow: var(--shadow); transition: background-color 0.4s ease, border-color 0.4s ease; }
+
+    /* ── Buttons ─────────────────────────────────────────── */
     .icon-btn {
-        width: 38px; height: 38px; border-radius: 11px;
-        border: none; background: transparent; color: var(--text-dim);
+        position: relative; width: 36px; height: 36px; border-radius: 10px;
+        border: none; background: transparent; color: var(--text-2);
         display: inline-flex; align-items: center; justify-content: center;
-        font-weight: 700; font-size: 0.8em; letter-spacing: 0.02em;
-        transition: background 0.15s ease, color 0.15s ease, transform 0.1s ease;
+        font-weight: 600; font-size: 12px; letter-spacing: 0.02em;
+        transition: background-color 0.2s ease, color 0.2s ease, transform 0.25s var(--spring);
     }
-    .icon-btn:hover { background: var(--surface-3); color: var(--text); }
-    .icon-btn:active { transform: scale(0.94); }
-    .icon-btn[aria-pressed="true"] { color: var(--text); }
+    .icon-btn:hover { background: var(--panel-2); color: var(--text); }
+    .icon-btn:active { transform: scale(0.9); }
+    .icon-btn .i { transition: transform 0.4s var(--spring); }
+    #theme-toggle:active .i { transform: rotate(-40deg); }
 
-    /* ── TOP BAR ───────────────────────────────────────────────── */
-    #top-dock {
-        position: fixed; top: 16px; right: 16px; z-index: 20;
-        display: flex; gap: 2px; padding: 5px; border-radius: 15px;
-    }
+    /* ── Top dock ───────────────────────────────────────── */
+    #top-dock { position: fixed; top: 16px; right: 16px; z-index: 20; display: flex; gap: 2px; padding: 4px; border-radius: 14px; }
     #ui-restore {
-        position: fixed; top: 16px; left: 16px; z-index: 20;
-        height: 48px; padding: 0 16px 0 13px; border-radius: 15px;
-        display: flex; align-items: center; gap: 9px;
-        font-weight: 600; font-size: 0.92em; color: var(--text);
+        position: fixed; top: 16px; left: 16px; z-index: 20; height: 44px; padding: 0 16px 0 12px; border-radius: 14px;
+        display: flex; align-items: center; gap: 9px; font-weight: 600; font-size: 13.5px; color: var(--text);
+        animation: slideIn 0.45s var(--out);
     }
-    #ui-restore:hover { background: var(--surface-solid); }
+    @keyframes slideIn { from { opacity: 0; transform: translateX(-12px); } to { opacity: 1; transform: none; } }
 
-    /* ── TIMER ─────────────────────────────────────────────────── */
+    /* ── Timer ──────────────────────────────────────────── */
     #timer-display {
-        position: fixed; top: 14px; left: 50%; z-index: 15;
-        width: 76px; height: 76px; margin-left: -38px;
-        display: flex; align-items: center; justify-content: center;
-        border-radius: 50%;
-        transition: opacity 0.25s ease, transform 0.25s var(--ease);
+        position: fixed; top: 16px; left: 50%; z-index: 15; width: 64px; height: 64px; margin-left: -32px;
+        display: flex; align-items: center; justify-content: center; border-radius: 50%;
+        background: var(--panel); border: 1px solid var(--line); box-shadow: var(--shadow);
+        transition: opacity 0.35s ease, transform 0.45s var(--spring), left 0.5s var(--out), background-color 0.4s ease;
     }
     body.panel-open #timer-display { left: calc(50% + 178px); }
-    #timer-display { transition: opacity 0.25s ease, transform 0.25s var(--ease), left 0.3s var(--ease); }
     #timer-display.clickable { cursor: pointer; }
-    #timer-display.idle { opacity: 0; transform: scale(0.85); pointer-events: none; }
-    #timer-ring { position: absolute; inset: 0; width: 100%; height: 100%; transform: rotate(-90deg); }
-    .timer-ring-bg { fill: var(--surface); stroke: var(--border-strong); stroke-width: 5; }
-    .timer-ring-fg {
-        fill: none; stroke: var(--accent); stroke-width: 5; stroke-linecap: round;
-        transition: stroke-dashoffset 0.2s linear, stroke 0.2s ease;
-    }
-    #timer-text {
-        position: relative; font-variant-numeric: tabular-nums;
-        font-size: 1.15rem; font-weight: 800; letter-spacing: -0.02em; color: var(--text);
-    }
-    #timer-pause-icon { position: absolute; bottom: 13px; color: var(--warning); display: none; }
-    #timer-pause-icon .i { width: 12px; height: 12px; }
-    #timer-display.paused #timer-pause-icon { display: block; }
-    #timer-display.paused .timer-ring-fg { stroke: var(--warning); }
-    #timer-display.paused #timer-text { color: var(--warning); }
-    #timer-display.urgent .timer-ring-fg { stroke: var(--danger); }
-    #timer-display.urgent #timer-text { color: var(--danger); }
+    #timer-display.clickable:active { transform: scale(0.93); }
+    #timer-display.idle { opacity: 0; transform: scale(0.6) translateY(-10px); pointer-events: none; }
+    #timer-ring { position: absolute; inset: 3px; width: calc(100% - 6px); height: calc(100% - 6px); transform: rotate(-90deg); overflow: visible; }
+    .timer-ring-bg { fill: none; stroke: var(--line); stroke-width: 4; }
+    .timer-ring-fg { fill: none; stroke: var(--accent); stroke-width: 4; stroke-linecap: round; transition: stroke-dashoffset 0.25s linear, stroke 0.3s ease; }
+    #timer-text { position: relative; font-size: 18px; font-weight: 650; letter-spacing: -0.03em; font-variant-numeric: tabular-nums; }
+    #timer-text.tick { animation: tick 0.35s var(--out); }
+    @keyframes tick { from { opacity: 0.2; transform: translateY(-6px) scale(0.9); } to { opacity: 1; transform: none; } }
+    #timer-pause-icon { position: absolute; inset: 0; display: grid; place-items: center; color: var(--warn); opacity: 0; transform: scale(0.6); transition: opacity 0.25s ease, transform 0.35s var(--spring); }
+    #timer-pause-icon .i { width: 20px; height: 20px; stroke-width: 2.4; }
+    #timer-display.paused #timer-pause-icon { opacity: 1; transform: none; }
+    #timer-display.paused #timer-text { opacity: 0; }
+    #timer-display.paused .timer-ring-fg { stroke: var(--warn); }
+    #timer-display.urgent .timer-ring-fg { stroke: var(--bad); }
+    #timer-display.urgent #timer-text { color: var(--bad); }
 
-    /* ── SIDE PANEL ────────────────────────────────────────────── */
+    /* ── Panel ──────────────────────────────────────────── */
     #ui {
-        position: fixed; top: 16px; left: 16px; bottom: 16px; z-index: 30;
-        width: 340px; border-radius: var(--radius);
+        position: fixed; top: 16px; left: 16px; bottom: 16px; z-index: 30; width: 340px; border-radius: 18px;
         display: flex; flex-direction: column; overflow: hidden;
-        transition: transform 0.3s var(--ease), opacity 0.2s ease;
+        transition: transform 0.55s var(--out), opacity 0.35s ease, background-color 0.4s ease;
     }
-    #ui.minimized { transform: translateX(calc(-100% - 30px)); opacity: 0; pointer-events: none; }
+    #ui.minimized { transform: translateX(calc(-100% - 32px)); opacity: 0; pointer-events: none; }
 
-    .panel-head { display: flex; align-items: center; gap: 12px; padding: 16px 14px 12px 18px; }
-    .logo {
-        width: 38px; height: 38px; border-radius: 11px; flex-shrink: 0;
-        display: grid; place-items: center; color: var(--on-accent);
-        background: linear-gradient(140deg, var(--accent), color-mix(in srgb, var(--accent) 55%, #a855f7));
-        box-shadow: 0 6px 16px -6px var(--accent);
-    }
-    .logo .i { width: 21px; height: 21px; }
+    .panel-head { display: flex; align-items: center; gap: 11px; padding: 14px 12px 12px 16px; }
+    .logo { width: 32px; height: 32px; border-radius: 9px; flex-shrink: 0; display: grid; place-items: center; background: var(--accent); color: var(--on-accent); transition: background-color 0.3s ease; }
+    .logo .i { width: 18px; height: 18px; stroke-width: 2; }
     .brand { flex: 1; min-width: 0; }
-    .brand h1 { font-size: 1.02em; font-weight: 750; letter-spacing: -0.015em; }
-    .brand p { font-size: 0.78em; color: var(--text-dim); }
+    .brand h1 { font-size: 14.5px; font-weight: 650; letter-spacing: -0.02em; }
+    .brand p { font-size: 12px; color: var(--text-3); }
 
-    #tabs {
-        display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px;
-        margin: 0 14px; padding: 4px; border-radius: 14px; background: var(--surface-2);
-        border: 1px solid var(--border);
+    /* Segmented controls (+ tabs, bottom nav) share a sliding thumb */
+    .seg { position: relative; display: flex; gap: 2px; padding: 3px; border-radius: var(--r-md); background: var(--sunken); border: 1px solid var(--line); isolation: isolate; transition: background-color 0.4s ease; }
+    .seg > button {
+        position: relative; z-index: 1; flex: 1; min-width: 0; padding: 6px 4px; border: none; border-radius: var(--r-sm);
+        background: transparent; color: var(--text-2); font-size: 12.5px; font-weight: 550;
+        white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+        transition: color 0.25s ease, transform 0.25s var(--spring);
     }
-    #tabs button {
-        display: flex; flex-direction: column; align-items: center; gap: 4px;
-        padding: 8px 2px 7px; border: none; border-radius: 10px; background: transparent;
-        color: var(--text-dim); font-size: 0.72em; font-weight: 650;
-        transition: background 0.18s ease, color 0.18s ease;
+    .seg > button:hover { color: var(--text); }
+    .seg > button:active { transform: scale(0.95); }
+    .seg > button.active { color: var(--text); }
+    .seg-thumb {
+        position: absolute; z-index: 0; top: 0; left: 0; border-radius: var(--r-sm); pointer-events: none;
+        background: var(--panel-3); box-shadow: var(--thumb-shadow);
+        transition: transform 0.45s var(--out), width 0.45s var(--out), height 0.45s var(--out), opacity 0.2s ease;
     }
-    #tabs button:hover { color: var(--text); }
-    #tabs button.active { background: var(--surface-solid); color: var(--text); box-shadow: var(--shadow-sm); }
-    #tabs button.active .i { color: var(--accent); }
+    .seg.no-anim .seg-thumb { transition: none; }
+
+    #tabs { margin: 0 12px; padding: 4px; border-radius: 13px; }
+    #tabs > button { display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 8px 2px 7px; font-size: 11.5px; border-radius: 9px; }
+    #tabs > button .i { transition: color 0.3s ease, transform 0.45s var(--spring); }
+    #tabs > button.active .i { color: var(--accent); transform: translateY(-1px) scale(1.08); }
+    #tabs .seg-thumb { border-radius: 9px; }
 
     .panel-body {
-        flex: 1; overflow-y: auto; overscroll-behavior: contain;
-        padding: 14px 18px 18px; display: flex; flex-direction: column; gap: 18px;
-        scrollbar-width: thin; scrollbar-color: var(--border-strong) transparent;
+        flex: 1; overflow-y: auto; overscroll-behavior: contain; padding: 4px 16px 18px;
+        display: flex; flex-direction: column;
+        scrollbar-width: thin; scrollbar-color: var(--line-strong) transparent;
+        mask-image: linear-gradient(to bottom, transparent 0, #000 12px, #000 calc(100% - 16px), transparent 100%);
     }
-    .mode-desc { font-size: 0.84em; color: var(--text-dim); line-height: 1.5; }
+    .mode-desc { font-size: 13px; color: var(--text-2); line-height: 1.55; padding: 12px 0 16px; }
+    .mode-desc.swap { animation: fadeUp 0.45s var(--out); }
 
     .section { display: flex; flex-direction: column; gap: 12px; }
-    .panel-body > .section { padding-top: 18px; border-top: 1px solid var(--border); }
-    .section-title { font-size: 0.7em; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-faint); }
+    .panel-body > .section { padding: 16px 0; border-top: 1px solid var(--line); }
+    .panel-body > .section:not(.hidden) { animation: fadeUp 0.5s var(--out) both; }
+    .panel-body > .section:nth-of-type(2) { animation-delay: 0.04s; }
+    .panel-body > .section:nth-of-type(3) { animation-delay: 0.08s; }
+    .panel-body > .section:nth-of-type(n+4) { animation-delay: 0.12s; }
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+    .section-title { font-size: 11px; font-weight: 600; letter-spacing: 0.07em; text-transform: uppercase; color: var(--text-3); }
     .field { display: flex; flex-direction: column; gap: 7px; }
-    .field-label { display: flex; justify-content: space-between; align-items: baseline; font-size: 0.82em; font-weight: 600; color: var(--text-dim); }
-    .field-label b { color: var(--text); font-variant-numeric: tabular-nums; }
-    @keyframes fadeUp { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
-    .section:not(.hidden) { animation: fadeUp 0.28s var(--ease); }
+    .field-label { display: flex; justify-content: space-between; align-items: baseline; font-size: 12.5px; font-weight: 500; color: var(--text-2); }
+    .field-label b { color: var(--text); font-weight: 600; font-variant-numeric: tabular-nums; }
+    .collapse { display: grid; grid-template-rows: 1fr; transition: grid-template-rows 0.45s var(--out), opacity 0.3s ease; }
+    .collapse > * { min-height: 0; overflow: hidden; }
+    .collapse.closed { grid-template-rows: 0fr; opacity: 0; }
+    .sub-field { padding-left: 12px; border-left: 1.5px solid var(--line-strong); margin-left: 1px; }
 
-    /* Segmented control */
-    .segmented {
-        display: flex; gap: 3px; padding: 3px; border-radius: var(--radius-sm);
-        background: var(--surface-2); border: 1px solid var(--border);
-    }
-    .segmented button {
-        flex: 1; min-width: 0; padding: 7px 4px; border: none; border-radius: 8px;
-        background: transparent; color: var(--text-dim);
-        font-size: 0.8em; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-        transition: background 0.18s ease, color 0.18s ease, box-shadow 0.18s ease;
-    }
-    .segmented button:hover { color: var(--text); }
-    .segmented button.active { background: var(--accent); color: var(--on-accent); box-shadow: 0 3px 10px -3px var(--accent); }
-
-    /* Switch row */
-    .switch {
-        display: flex; align-items: center; justify-content: space-between; gap: 12px;
-        width: 100%; padding: 2px 0; border: none; background: none; text-align: left;
-        font-size: 0.88em; font-weight: 550; color: var(--text);
-    }
+    /* Switch */
+    .switch { display: flex; align-items: center; justify-content: space-between; gap: 12px; width: 100%; padding: 2px 0; border: none; background: none; text-align: left; font-size: 13.5px; font-weight: 500; color: var(--text); }
     .switch-text { display: flex; flex-direction: column; gap: 1px; }
-    .switch-text small { font-size: 0.85em; font-weight: 450; color: var(--text-faint); }
-    .switch-track {
-        position: relative; width: 38px; height: 22px; flex-shrink: 0; border-radius: 11px;
-        background: var(--surface-3); border: 1px solid var(--border-strong);
-        transition: background 0.2s ease, border-color 0.2s ease;
-    }
+    .switch-text small { font-size: 12px; font-weight: 400; color: var(--text-3); }
+    .switch-track { position: relative; width: 34px; height: 20px; flex-shrink: 0; border-radius: 10px; background: var(--line-strong); transition: background-color 0.3s ease; }
     .switch-track::after {
-        content: ""; position: absolute; top: 2px; left: 2px; width: 16px; height: 16px; border-radius: 50%;
-        background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,0.35);
-        transition: transform 0.22s var(--ease);
+        content: ""; position: absolute; top: 2px; left: 2px; width: 16px; height: 16px; border-radius: 8px; background: #fff;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.3); transition: transform 0.45s var(--spring), width 0.2s ease;
     }
-    .switch[aria-checked="true"] .switch-track { background: var(--accent); border-color: transparent; }
-    .switch[aria-checked="true"] .switch-track::after { transform: translateX(16px); }
-    .sub-field { padding-left: 12px; border-left: 2px solid var(--border); margin-left: 2px; }
+    .switch:active .switch-track::after { width: 20px; }
+    .switch[aria-checked="true"] .switch-track { background: var(--accent); }
+    .switch[aria-checked="true"] .switch-track::after { transform: translateX(14px); }
+    .switch[aria-checked="true"]:active .switch-track::after { transform: translateX(10px); }
 
     /* Range */
     .range-row { display: flex; align-items: center; gap: 12px; }
-    input[type="range"] {
-        flex: 1; -webkit-appearance: none; appearance: none; height: 22px; background: transparent; cursor: pointer;
-    }
-    input[type="range"]::-webkit-slider-runnable-track { height: 4px; border-radius: 2px; background: var(--surface-3); }
-    input[type="range"]::-moz-range-track { height: 4px; border-radius: 2px; background: var(--surface-3); }
+    input[type="range"] { --p: 50%; flex: 1; -webkit-appearance: none; appearance: none; height: 22px; background: transparent; cursor: pointer; }
+    input[type="range"]::-webkit-slider-runnable-track { height: 4px; border-radius: 2px; background: linear-gradient(to right, var(--accent) var(--p), var(--line-strong) var(--p)); }
+    input[type="range"]::-moz-range-track { height: 4px; border-radius: 2px; background: var(--line-strong); }
     input[type="range"]::-moz-range-progress { height: 4px; border-radius: 2px; background: var(--accent); }
-    input[type="range"]::-webkit-slider-thumb {
-        -webkit-appearance: none; width: 18px; height: 18px; margin-top: -7px; border-radius: 50%;
-        background: #fff; border: 3px solid var(--accent); box-shadow: 0 1px 4px rgba(0,0,0,0.3);
-    }
-    input[type="range"]::-moz-range-thumb {
-        width: 12px; height: 12px; border-radius: 50%; background: #fff; border: 3px solid var(--accent);
-    }
-    .num-input {
-        display: flex; align-items: center; gap: 4px; padding: 5px 9px; border-radius: 9px;
-        background: var(--surface-2); border: 1px solid var(--border);
-        font-size: 0.85em; font-weight: 650; color: var(--text-dim);
-    }
-    .num-input input {
-        width: 38px; background: transparent; border: none; outline: none; text-align: right;
-        font-weight: 750; color: var(--text); -moz-appearance: textfield;
-    }
+    input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; width: 16px; height: 16px; margin-top: -6px; border-radius: 50%; background: #fff; box-shadow: 0 1px 4px rgba(0,0,0,0.35), 0 0 0 1px rgba(0,0,0,0.06); transition: transform 0.3s var(--spring); }
+    input[type="range"]:active::-webkit-slider-thumb { transform: scale(1.25); }
+    input[type="range"]::-moz-range-thumb { width: 16px; height: 16px; border: none; border-radius: 50%; background: #fff; box-shadow: 0 1px 4px rgba(0,0,0,0.35); }
+    .num-input { display: flex; align-items: center; gap: 4px; padding: 5px 9px; border-radius: 9px; background: var(--sunken); border: 1px solid var(--line); font-size: 12.5px; font-weight: 500; color: var(--text-3); transition: border-color 0.2s ease; }
+    .num-input:focus-within { border-color: var(--accent); }
+    .num-input input { width: 36px; background: transparent; border: none; outline: none; text-align: right; font-weight: 600; color: var(--text); font-variant-numeric: tabular-nums; -moz-appearance: textfield; }
     .num-input input::-webkit-outer-spin-button, .num-input input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
 
-    /* Collapsible (appearance) */
-    details.section > summary {
-        display: flex; justify-content: space-between; align-items: center; cursor: pointer; list-style: none;
-    }
-    details.section > summary::-webkit-details-marker { display: none; }
-    details.section > summary .i { width: 16px; height: 16px; color: var(--text-faint); transition: transform 0.2s ease; }
-    details.section[open] > summary .i { transform: rotate(180deg); }
-    details.section[open] { gap: 14px; }
-
+    /* Appearance (collapsible) */
+    .disclosure { display: flex; justify-content: space-between; align-items: center; width: 100%; border: none; background: none; padding: 0; }
+    .disclosure .i { width: 16px; height: 16px; color: var(--text-3); transition: transform 0.45s var(--spring); }
+    .disclosure[aria-expanded="true"] .i { transform: rotate(180deg); }
+    .appearance-inner { display: flex; flex-direction: column; gap: 14px; padding-top: 14px; }
     .palette { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
-    .color-row {
-        display: flex; align-items: center; gap: 9px; padding: 7px 9px; border-radius: 10px; cursor: pointer;
-        background: var(--surface-2); border: 1px solid var(--border); font-size: 0.8em; font-weight: 550;
-        transition: border-color 0.15s ease;
-    }
-    .color-row:hover { border-color: var(--border-strong); }
-    .color-dot { position: relative; width: 20px; height: 20px; border-radius: 50%; flex-shrink: 0; overflow: hidden; box-shadow: inset 0 0 0 1px var(--border-strong); }
-    .color-dot input { position: absolute; inset: -8px; width: 36px; height: 36px; opacity: 0; cursor: pointer; }
-    .link-btn {
-        align-self: flex-start; border: none; background: none; color: var(--text-dim);
-        font-size: 0.8em; font-weight: 600; text-decoration: underline; text-underline-offset: 3px;
-    }
+    .color-row { display: flex; align-items: center; gap: 9px; padding: 7px 9px; border-radius: 10px; cursor: pointer; background: var(--sunken); border: 1px solid var(--line); font-size: 12.5px; font-weight: 500; transition: border-color 0.2s ease, transform 0.25s var(--spring); }
+    .color-row:hover { border-color: var(--line-strong); }
+    .color-row:active { transform: scale(0.97); }
+    .color-dot { position: relative; width: 18px; height: 18px; border-radius: 50%; flex-shrink: 0; overflow: hidden; box-shadow: inset 0 0 0 1px rgba(128,128,128,0.35); }
+    .color-dot input { position: absolute; inset: -8px; width: 34px; height: 34px; opacity: 0; cursor: pointer; }
+    .link-btn { align-self: flex-start; border: none; background: none; color: var(--text-3); font-size: 12.5px; font-weight: 500; transition: color 0.2s ease; }
     .link-btn:hover { color: var(--text); }
 
-    .panel-foot {
-        display: flex; align-items: center; justify-content: space-between;
-        padding: 11px 18px; border-top: 1px solid var(--border); font-size: 0.8em; color: var(--text-dim);
-    }
-    .panel-foot b { color: var(--text); font-variant-numeric: tabular-nums; }
+    .panel-foot { display: flex; align-items: center; justify-content: space-between; padding: 10px 12px 10px 16px; border-top: 1px solid var(--line); font-size: 12.5px; color: var(--text-3); }
+    .panel-foot b { color: var(--text); font-weight: 600; font-variant-numeric: tabular-nums; display: inline-block; }
     .panel-foot .icon-btn { width: 28px; height: 28px; }
     .panel-foot .icon-btn .i { width: 15px; height: 15px; }
+    .panel-foot .icon-btn:active .i { transform: rotate(-200deg); }
 
-    /* ── ACTION BAR (floating, context-aware) ─────────────────── */
+    /* ── Action bar ─────────────────────────────────────── */
     #action-bar {
         position: fixed; left: 50%; bottom: 20px; transform: translateX(-50%); z-index: 20;
-        display: flex; align-items: center; gap: 4px; padding: 6px; border-radius: 17px;
-        transition: left 0.3s var(--ease);
+        display: flex; align-items: center; gap: 2px; padding: 5px; border-radius: 15px; overflow: hidden; white-space: nowrap;
+        transition: left 0.5s var(--out), width 0.45s var(--out), background-color 0.4s ease;
     }
     body.panel-open #action-bar { left: calc(50% + 178px); }
     .act-btn {
-        height: 44px; min-width: 44px; padding: 0 12px; border: none; border-radius: 12px;
-        background: transparent; color: var(--text-dim);
-        display: inline-flex; align-items: center; justify-content: center; gap: 8px;
-        font-size: 0.88em; font-weight: 650; white-space: nowrap;
-        transition: background 0.15s ease, color 0.15s ease, transform 0.1s ease, opacity 0.15s ease;
+        height: 40px; min-width: 40px; padding: 0 12px; border: none; border-radius: 10px; flex-shrink: 0;
+        background: transparent; color: var(--text-2);
+        display: inline-flex; align-items: center; justify-content: center; gap: 7px; font-size: 13.5px; font-weight: 550;
+        transition: background-color 0.2s ease, color 0.2s ease, transform 0.3s var(--spring), opacity 0.25s ease;
     }
-    .act-btn:hover:not(:disabled) { background: var(--surface-3); color: var(--text); }
-    .act-btn:active:not(:disabled) { transform: scale(0.96); }
-    .act-btn:disabled { opacity: 0.35; cursor: default; }
+    /* "backwards" fill: after the pop-in the button's own opacity (e.g. the
+       dimmed :disabled state) applies again. */
+    .act-btn.enter { animation: popIn 0.45s var(--spring) backwards; }
+    @keyframes popIn { from { opacity: 0; transform: scale(0.6); } }
+    .act-btn:hover:not(:disabled) { background: var(--panel-2); color: var(--text); }
+    .act-btn:active:not(:disabled) { transform: scale(0.92); }
+    .act-btn:disabled { opacity: 0.3; cursor: default; }
     .act-btn.icon-only { padding: 0; }
-    .act-btn.primary { background: var(--accent); color: var(--on-accent); padding: 0 18px; box-shadow: 0 6px 18px -6px var(--accent); }
-    .act-btn.primary:hover:not(:disabled) { background: var(--accent); color: var(--on-accent); filter: brightness(1.1); }
-    .act-sep { width: 1px; height: 24px; background: var(--border-strong); margin: 0 4px; }
-    .act-btn kbd {
-        font-family: inherit; font-size: 0.75em; font-weight: 700; padding: 1px 6px; border-radius: 5px;
-        background: rgba(255,255,255,0.2); opacity: 0.85;
-    }
+    .act-btn.primary { background: var(--inverse); color: var(--on-inverse); padding: 0 16px; font-weight: 600; }
+    .act-btn.primary:hover:not(:disabled) { background: var(--inverse); color: var(--on-inverse); opacity: 0.9; }
+    #act-new .i { transition: transform 0.6s var(--out); }
+    #act-new:active .i { transform: rotate(200deg); }
+    .act-sep { width: 1px; height: 22px; background: var(--line-strong); margin: 0 5px; flex-shrink: 0; }
+    .act-btn kbd { font-family: inherit; font-size: 11px; font-weight: 500; padding: 1px 6px; border-radius: 5px; color: var(--text-3); background: var(--sunken); border: 1px solid var(--line); }
 
     #drawhint {
-        position: fixed; left: 50%; bottom: 92px; transform: translateX(-50%); z-index: 5;
-        padding: 7px 14px; border-radius: 99px; background: var(--surface-2);
-        font-size: 0.85em; font-weight: 550; color: var(--text-dim); white-space: nowrap;
-        pointer-events: none; transition: opacity 0.3s ease, left 0.3s var(--ease);
+        position: fixed; left: 50%; bottom: 82px; transform: translateX(-50%); z-index: 5;
+        padding: 6px 13px; border-radius: 99px; font-size: 12.5px; font-weight: 500; color: var(--text-2); white-space: nowrap;
+        background: var(--panel); border: 1px solid var(--line);
+        pointer-events: none; transition: opacity 0.4s ease, left 0.5s var(--out), transform 0.4s var(--out);
     }
+    #drawhint.swap { animation: hintSwap 0.45s var(--out); }
+    @keyframes hintSwap { from { opacity: 0; transform: translate(-50%, 6px); } to { opacity: 1; transform: translate(-50%, 0); } }
     body.panel-open #drawhint { left: calc(50% + 178px); }
 
-    /* ── STATS DOCK ────────────────────────────────────────────── */
+    /* ── Stats ──────────────────────────────────────────── */
     #stats-dock {
-        position: fixed; right: 16px; top: 76px; z-index: 20;
-        display: flex; align-items: center; gap: 4px; padding: 6px 6px 6px 8px; border-radius: 16px;
-        overflow: hidden;
-        transition: transform 0.3s var(--ease), opacity 0.2s ease;
+        position: fixed; right: 16px; top: 72px; z-index: 20; display: flex; align-items: center; gap: 2px;
+        padding: 5px 5px 5px 6px; border-radius: 14px; overflow: hidden;
+        transition: transform 0.5s var(--out), opacity 0.3s ease, background-color 0.4s ease;
     }
-    #stats-dock.minimized { transform: translateX(calc(100% + 30px)); opacity: 0; pointer-events: none; }
-    .stat {
-        display: flex; align-items: center; gap: 8px; padding: 4px 10px; border-radius: 10px;
-    }
-    .stat-emoji { font-size: 1.25em; line-height: 1; transition: filter 0.3s ease, opacity 0.3s ease, transform 0.3s ease; }
+    #stats-dock.minimized { transform: translateX(calc(100% + 24px)); opacity: 0; pointer-events: none; }
+    .stat { display: flex; align-items: center; gap: 8px; padding: 3px 10px 3px 8px; border-radius: 9px; }
+    .stat-icon { color: var(--text-3); transition: color 0.4s ease, transform 0.4s var(--spring); }
+    .stat-icon.lit { color: var(--accent); }
+    .stat-icon.lit.hot { animation: flicker 1.6s ease-in-out infinite; }
+    @keyframes flicker { 0%,100% { transform: scale(1) rotate(0); } 30% { transform: scale(1.08) rotate(-4deg); } 60% { transform: scale(0.97) rotate(3deg); } }
     .stat-col { display: flex; flex-direction: column; }
-    .stat-num { font-weight: 800; font-size: 1em; line-height: 1.15; font-variant-numeric: tabular-nums; }
-    .stat-lbl { font-size: 0.64em; font-weight: 650; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-faint); }
-    .flame-icon { filter: grayscale(1); opacity: 0.4; }
-    .flame-icon.tier-1, .flame-icon.tier-2, .flame-icon.tier-3, .flame-icon.tier-4 { filter: none; opacity: 1; }
-    .flame-icon.tier-3 { animation: flame 1.4s ease-in-out infinite; }
-    .flame-icon.tier-4 { animation: flame 1s ease-in-out infinite; filter: saturate(1.5); }
-    @keyframes flame { 0%,100% { transform: scale(1); } 50% { transform: scale(1.14); } }
-    .stats-sep { width: 1px; height: 26px; background: var(--border); }
-    .level-progress-wrap { position: absolute; left: 0; right: 0; bottom: 0; height: 3px; background: var(--surface-2); }
-    .level-progress-fill { height: 100%; width: 0%; background: linear-gradient(90deg, var(--accent), #a855f7); transition: width 0.5s var(--ease); }
-    #stats-restore { position: fixed; right: 16px; top: 76px; z-index: 20; width: 44px; height: 44px; border-radius: 13px; }
+    .stat-num { font-weight: 650; font-size: 14px; line-height: 1.2; font-variant-numeric: tabular-nums; display: inline-block; }
+    .stat-num.bump { animation: bump 0.5s var(--spring); }
+    @keyframes bump { 40% { transform: translateY(-3px) scale(1.18); color: var(--accent); } }
+    .stat-lbl { font-size: 10.5px; font-weight: 500; color: var(--text-3); }
+    .stats-sep { width: 1px; height: 24px; background: var(--line); margin: 0 2px; }
+    .level-progress-wrap { position: absolute; left: 0; right: 0; bottom: 0; height: 2px; background: transparent; }
+    .level-progress-fill { height: 100%; width: 0%; background: var(--accent); transition: width 0.9s var(--out); }
+    #stats-restore { position: fixed; right: 16px; top: 72px; z-index: 20; width: 42px; height: 42px; border-radius: 13px; animation: slideIn 0.45s var(--out); }
 
-    /* ── ACCURACY TOAST ────────────────────────────────────────── */
+    /* ── Accuracy card ──────────────────────────────────── */
     #accuracy-badge {
-        position: fixed; top: 50%; right: 24px; transform: translateY(-50%); z-index: 25;
-        width: 150px; padding: 18px 16px 16px; border-radius: 20px; text-align: center; pointer-events: none;
-        animation: pop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        position: fixed; top: 50%; right: 24px; z-index: 25; width: 156px; margin-top: -105px;
+        padding: 18px 16px 16px; border-radius: 20px; text-align: center; pointer-events: none;
+        animation: cardIn 0.6s var(--spring);
     }
-    @keyframes pop { from { opacity: 0; transform: translateY(-50%) scale(0.85); } to { opacity: 1; transform: translateY(-50%) scale(1); } }
-    .acc-ring { position: relative; width: 92px; height: 92px; margin: 0 auto 10px; }
+    @keyframes cardIn { from { opacity: 0; transform: translateX(24px) scale(0.92); } to { opacity: 1; transform: none; } }
+    .acc-ring { position: relative; width: 96px; height: 96px; margin: 0 auto 12px; }
     .acc-ring svg { width: 100%; height: 100%; transform: rotate(-90deg); }
-    .acc-ring circle { fill: none; stroke-width: 8; }
-    .acc-ring .bg { stroke: var(--surface-3); }
-    .acc-ring .fg { stroke: var(--accent); stroke-linecap: round; transition: stroke-dashoffset 0.8s var(--ease); }
-    #accuracy-pct { position: absolute; inset: 0; display: grid; place-items: center; font-size: 1.5em; font-weight: 850; letter-spacing: -0.03em; font-variant-numeric: tabular-nums; }
-    #accuracy-grade { font-weight: 700; font-size: 0.95em; }
-    #accuracy-label { font-size: 0.68em; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-faint); margin-top: 2px; font-weight: 650; }
+    .acc-ring circle { fill: none; stroke-width: 7; }
+    .acc-ring .bg { stroke: var(--line); }
+    .acc-ring .fg { stroke: var(--accent); stroke-linecap: round; transition: stroke-dashoffset 1s var(--out); }
+    #accuracy-pct { position: absolute; inset: 0; display: grid; place-items: center; font-size: 24px; font-weight: 650; letter-spacing: -0.04em; font-variant-numeric: tabular-nums; }
+    #accuracy-grade { font-weight: 600; font-size: 14px; }
+    #accuracy-label { font-size: 11.5px; color: var(--text-3); margin-top: 1px; }
 
-    /* ── MODALS ────────────────────────────────────────────────── */
-    .overlay {
-        position: fixed; inset: 0; z-index: 100; display: none; align-items: center; justify-content: center;
-        padding: 20px; background: rgba(0, 0, 0, 0.5);
-        backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+    /* ── Toast ──────────────────────────────────────────── */
+    #toast {
+        position: fixed; top: 92px; left: 50%; z-index: 90; display: flex; align-items: center; gap: 8px;
+        padding: 8px 14px 8px 10px; border-radius: 99px; font-size: 13px; font-weight: 550; white-space: nowrap;
+        transform: translate(-50%, -16px) scale(0.92); opacity: 0; pointer-events: none;
+        transition: transform 0.5s var(--spring), opacity 0.3s ease, left 0.5s var(--out);
     }
-    .overlay.open { display: flex; }
+    body.panel-open #toast { left: calc(50% + 178px); }
+    #toast.show { transform: translate(-50%, 0) scale(1); opacity: 1; }
+    #toast .i { color: var(--accent); }
+
+    /* ── Modals ─────────────────────────────────────────── */
+    .overlay { position: fixed; inset: 0; z-index: 100; display: none; align-items: center; justify-content: center; padding: 20px; background: rgba(0,0,0,0.45); }
+    body.light .overlay { background: rgba(26,25,24,0.25); }
+    .overlay.open { display: flex; animation: fade 0.3s ease; }
+    .overlay.closing { animation: fade 0.22s ease reverse forwards; }
+    @keyframes fade { from { opacity: 0; } to { opacity: 1; } }
     .modal {
-        width: 100%; max-width: 420px; max-height: calc(100dvh - 40px); overflow-y: auto;
-        padding: 22px; border-radius: 22px; background: var(--surface-solid);
-        border: 1px solid var(--border); box-shadow: var(--shadow);
-        display: flex; flex-direction: column; gap: 14px;
-        animation: modalIn 0.28s cubic-bezier(0.34, 1.4, 0.64, 1);
-        scrollbar-width: thin;
+        width: 100%; max-width: 420px; max-height: calc(100dvh - 40px); overflow-y: auto; padding: 20px; border-radius: 20px;
+        background: var(--panel); box-shadow: var(--shadow-pop); display: flex; flex-direction: column; gap: 12px;
+        animation: modalIn 0.55s var(--spring); scrollbar-width: thin;
     }
-    @keyframes modalIn { from { opacity: 0; transform: scale(0.94) translateY(10px); } to { opacity: 1; transform: none; } }
+    .overlay.closing .modal { animation: modalOut 0.22s ease forwards; }
+    @keyframes modalIn { from { opacity: 0; transform: translateY(16px) scale(0.95); } to { opacity: 1; transform: none; } }
+    @keyframes modalOut { to { opacity: 0; transform: translateY(8px) scale(0.97); } }
+    .modal > * { animation: fadeUp 0.5s var(--out) both; }
+    .modal > :nth-child(2) { animation-delay: 0.04s; } .modal > :nth-child(3) { animation-delay: 0.07s; }
+    .modal > :nth-child(4) { animation-delay: 0.1s; } .modal > :nth-child(n+5) { animation-delay: 0.13s; }
     .modal-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
-    .modal-title { font-size: 1.15em; font-weight: 800; letter-spacing: -0.02em; }
-    .modal-sub { font-size: 0.8em; color: var(--text-dim); margin-top: 2px; }
-    .modal-section { font-size: 0.68em; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-faint); margin-top: 4px; }
+    .modal-title { font-size: 17px; font-weight: 650; letter-spacing: -0.025em; }
+    .modal-sub { font-size: 12.5px; color: var(--text-3); margin-top: 2px; }
+    .modal-section { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.07em; color: var(--text-3); margin-top: 6px; }
 
-    .help-modes { display: grid; gap: 8px; }
-    .help-mode { display: flex; gap: 12px; align-items: flex-start; padding: 10px 12px; border-radius: 12px; background: var(--surface-2); }
-    .help-mode .i { color: var(--accent); margin-top: 2px; }
-    .help-mode b { display: block; font-size: 0.88em; }
-    .help-mode span { font-size: 0.8em; color: var(--text-dim); line-height: 1.45; }
-    .hk-list { display: grid; gap: 2px; }
-    .hk-row { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 6px 2px; font-size: 0.86em; color: var(--text-dim); }
-    .hk-row + .hk-row { border-top: 1px solid var(--border); }
-    kbd {
-        font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 0.82em; font-weight: 600;
-        padding: 2px 7px; border-radius: 6px; color: var(--text); white-space: nowrap;
-        background: var(--surface-2); border: 1px solid var(--border-strong); border-bottom-width: 2px;
-    }
-    .social-row { display: flex; gap: 8px; }
-    .social-link {
-        flex: 1; display: flex; align-items: center; justify-content: center; gap: 8px; padding: 10px; border-radius: 12px;
-        background: var(--surface-2); border: 1px solid var(--border); color: var(--text); text-decoration: none;
-        font-size: 0.85em; font-weight: 650; transition: border-color 0.15s ease;
-    }
-    .social-link:hover { border-color: var(--border-strong); }
-    .social-link svg { width: 17px; height: 17px; fill: currentColor; }
+    .help-modes { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+    .help-mode { display: flex; flex-direction: column; gap: 6px; padding: 12px; border-radius: 12px; background: var(--sunken); border: 1px solid var(--line); }
+    .help-mode .i { color: var(--accent); }
+    .help-mode b { font-size: 13px; font-weight: 600; }
+    .help-mode span { font-size: 12px; color: var(--text-2); line-height: 1.45; }
+    .hk-list { display: grid; }
+    .hk-row { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 7px 0; font-size: 13px; color: var(--text-2); }
+    .hk-row + .hk-row { border-top: 1px solid var(--line); }
+    kbd { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 11.5px; font-weight: 500; padding: 2px 7px; border-radius: 6px; color: var(--text); white-space: nowrap; background: var(--sunken); border: 1px solid var(--line-strong); box-shadow: 0 1px 0 var(--line-strong); }
+    .social-row { display: flex; gap: 6px; }
+    .social-link { flex: 1; display: flex; align-items: center; justify-content: center; gap: 8px; padding: 10px; border-radius: 12px; background: var(--sunken); border: 1px solid var(--line); color: var(--text); text-decoration: none; font-size: 13px; font-weight: 550; transition: border-color 0.2s ease, transform 0.25s var(--spring); }
+    .social-link:hover { border-color: var(--line-strong); }
+    .social-link:active { transform: scale(0.96); }
+    .social-link svg { width: 16px; height: 16px; fill: currentColor; }
 
-    /* Summary */
-    .sum-hero {
-        display: flex; align-items: center; gap: 16px; padding: 16px 18px; border-radius: 16px;
-        background: linear-gradient(135deg, color-mix(in srgb, var(--accent) 16%, transparent), color-mix(in srgb, #a855f7 12%, transparent));
-        border: 1px solid color-mix(in srgb, var(--accent) 30%, transparent);
-    }
-    .sum-hero-emoji { font-size: 2.4em; line-height: 1; }
+    .sum-hero { display: flex; align-items: center; gap: 14px; padding: 16px; border-radius: 14px; background: var(--sunken); border: 1px solid var(--line); }
+    .sum-hero-icon { width: 44px; height: 44px; border-radius: 12px; display: grid; place-items: center; flex-shrink: 0; background: var(--accent); color: var(--on-accent); }
+    .sum-hero-icon .i { width: 22px; height: 22px; }
     .sum-hero-text { flex: 1; min-width: 0; }
-    .sum-hero-label { font-size: 0.68em; text-transform: uppercase; letter-spacing: 0.07em; color: var(--text-dim); font-weight: 700; }
-    .sum-hero-value { font-size: 1.9em; font-weight: 850; letter-spacing: -0.03em; line-height: 1.15; }
-    .sum-hero-sub { font-size: 0.78em; color: var(--text-dim); }
-    .sum-stat-row {
-        display: flex; align-items: center; justify-content: space-between; gap: 10px;
-        padding: 10px 14px; border-radius: 12px; background: var(--surface-2); border: 1px solid var(--border);
-    }
+    .sum-hero-label { font-size: 12px; color: var(--text-3); font-weight: 500; }
+    .sum-hero-value { font-size: 26px; font-weight: 650; letter-spacing: -0.04em; line-height: 1.15; font-variant-numeric: tabular-nums; }
+    .sum-hero-sub { font-size: 12.5px; color: var(--text-2); }
+    .sum-stat-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 10px 2px; border-bottom: 1px solid var(--line); }
     .sum-stat-left { display: flex; align-items: center; gap: 10px; }
-    .sum-stat-icon { width: 24px; text-align: center; font-size: 1.1em; }
-    .sum-stat-name { font-size: 0.86em; color: var(--text-dim); }
+    .sum-stat-icon { color: var(--text-3); display: grid; }
+    .sum-stat-icon .i { width: 16px; height: 16px; }
+    .sum-stat-name { font-size: 13px; color: var(--text-2); }
     .sum-stat-right { display: flex; align-items: center; gap: 8px; }
-    .sum-stat-val { font-weight: 800; font-variant-numeric: tabular-nums; }
-    .sum-delta { font-size: 0.72em; font-weight: 700; padding: 2px 8px; border-radius: 99px; white-space: nowrap; }
-    .sum-delta.up { background: color-mix(in srgb, var(--success) 16%, transparent); color: var(--success); }
-    .sum-delta.down { background: color-mix(in srgb, var(--danger) 14%, transparent); color: var(--danger); }
-    .sum-delta.same { background: var(--surface-3); color: var(--text-dim); }
-    .sum-acc-bar-wrap { height: 6px; border-radius: 6px; background: var(--surface-3); overflow: hidden; margin-top: -6px; }
-    .sum-acc-bar-fill { height: 100%; border-radius: 6px; background: linear-gradient(90deg, var(--accent), #a855f7); transition: width 0.7s var(--ease); }
-    .sum-breakdown-detail { font-size: 0.75em; color: var(--text-dim); padding: 4px 4px 2px 48px; }
-    .sum-breakdown-empty { font-size: 0.82em; color: var(--text-dim); padding: 4px; }
-    #sum-breakdown-list { display: flex; flex-direction: column; gap: 6px; }
-    .sum-banner { padding: 11px 14px; border-radius: 12px; font-size: 0.84em; font-weight: 600; line-height: 1.45; text-align: center; }
-    .sum-banner.positive { background: color-mix(in srgb, var(--success) 12%, transparent); color: color-mix(in srgb, var(--success) 75%, var(--text)); }
-    .sum-banner.neutral { background: color-mix(in srgb, var(--accent) 12%, transparent); color: color-mix(in srgb, var(--accent) 60%, var(--text)); }
-    .sum-banner.warning { background: color-mix(in srgb, var(--warning) 13%, transparent); color: color-mix(in srgb, var(--warning) 70%, var(--text)); }
-    .btn {
-        display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; padding: 11px;
-        border-radius: 12px; border: 1px solid var(--border); background: var(--surface-2); color: var(--text);
-        font-size: 0.88em; font-weight: 650; transition: border-color 0.15s ease, background 0.15s ease;
-    }
-    .btn:hover { border-color: var(--border-strong); background: var(--surface-3); }
+    .sum-stat-val { font-weight: 600; font-variant-numeric: tabular-nums; }
+    .sum-delta { font-size: 11.5px; font-weight: 550; padding: 1px 7px; border-radius: 99px; white-space: nowrap; }
+    .sum-delta.up { background: color-mix(in srgb, var(--good) 15%, transparent); color: var(--good); }
+    .sum-delta.down { background: color-mix(in srgb, var(--bad) 14%, transparent); color: var(--bad); }
+    .sum-delta.same { background: var(--sunken); color: var(--text-3); }
+    .sum-acc-bar-wrap { height: 4px; border-radius: 4px; background: var(--line); overflow: hidden; margin: -2px 0 2px; }
+    .sum-acc-bar-fill { height: 100%; border-radius: 4px; background: var(--accent); transition: width 1s var(--out); }
+    .sum-breakdown-detail { font-size: 12px; color: var(--text-3); padding: 0 2px 8px 28px; margin-top: -4px; border-bottom: 1px solid var(--line); }
+    .sum-breakdown-row { border-bottom: none; }
+    .sum-breakdown-empty { font-size: 13px; color: var(--text-3); padding: 4px 2px; }
+    #sum-breakdown-list { display: flex; flex-direction: column; }
+    .sum-banner { padding: 11px 14px; border-radius: 12px; font-size: 13px; font-weight: 500; line-height: 1.5; background: var(--sunken); border: 1px solid var(--line); color: var(--text-2); }
+    .sum-banner::before { content: ""; display: inline-block; width: 7px; height: 7px; border-radius: 50%; margin-right: 8px; vertical-align: 1px; background: var(--accent); }
+    .sum-banner.positive::before { background: var(--good); }
+    .sum-banner.warning::before { background: var(--warn); }
+    .btn { display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; padding: 10px; border-radius: 11px; border: 1px solid var(--line); background: transparent; color: var(--text); font-size: 13px; font-weight: 550; transition: background-color 0.2s ease, transform 0.25s var(--spring); }
+    .btn:hover { background: var(--panel-2); }
+    .btn:active { transform: scale(0.98); }
 
     #bottom-nav { display: none; }
 
-    /* Narrower desktops/tablets: the stats dock would run into the timer,
-       so it steps aside (stats stay available via the summary button). */
-    @media (max-width: 1200px) {
-        body.panel-open #stats-dock, body.panel-open #stats-restore { display: none; }
-    }
-    @media (max-width: 900px) {
-        #stats-dock, #stats-restore { display: none !important; }
-    }
+    @media (max-width: 1200px) { body.panel-open #stats-dock, body.panel-open #stats-restore { display: none; } }
+    @media (max-width: 900px) { #stats-dock, #stats-restore { display: none !important; } }
 
-    /* ── MOBILE ────────────────────────────────────────────────── */
+    /* ── Mobile ─────────────────────────────────────────── */
     @media (max-width: 720px) {
-        body { font-size: 14px; }
         #top-dock { top: 10px; right: 10px; padding: 3px; border-radius: 13px; }
         #top-dock .icon-btn { width: 34px; height: 34px; }
         .hide-mobile { display: none !important; }
         #ui-restore { top: 10px; left: 10px; height: 42px; width: 42px; padding: 0; justify-content: center; border-radius: 13px; }
         #ui-restore span { display: none; }
-        #timer-display, body.panel-open #timer-display { left: 50%; top: 62px; width: 58px; height: 58px; margin-left: -29px; }
-        #timer-text { font-size: 0.95rem; }
-        #timer-pause-icon { bottom: 8px; }
+        #timer-display, body.panel-open #timer-display { left: 50%; top: 62px; width: 54px; height: 54px; margin-left: -27px; }
+        #timer-text { font-size: 15px; }
+        #toast, body.panel-open #toast { left: 50%; top: 126px; }
 
-        #ui {
-            top: auto; left: 0; right: 0; bottom: 0; width: auto; max-height: 78dvh;
-            border-radius: 22px 22px 0 0; border-bottom: none; padding-bottom: var(--safe-b);
-        }
-        #ui.minimized { transform: translateY(calc(100% + 20px)); }
-        #ui::before { content: ""; width: 38px; height: 4px; border-radius: 2px; background: var(--border-strong); margin: 8px auto 0; flex-shrink: 0; }
-        .panel-head { padding-top: 8px; }
+        #ui { top: auto; left: 0; right: 0; bottom: 0; width: auto; max-height: 78dvh; border-radius: 22px 22px 0 0; border-bottom: none; padding-bottom: var(--safe-b); }
+        #ui.minimized { transform: translateY(calc(100% + 20px)); opacity: 1; }
+        #ui::before { content: ""; width: 36px; height: 4px; border-radius: 2px; background: var(--line-strong); margin: 8px auto 0; flex-shrink: 0; }
+        .panel-head { padding-top: 6px; }
         #ui #tabs { display: none; }
         body.panel-open #action-bar, body.panel-open #drawhint { left: 50%; }
 
-        #bottom-nav {
-            display: flex; position: fixed; left: 10px; right: 10px; bottom: calc(10px + var(--safe-b)); z-index: 20;
-            padding: 5px; gap: 3px; border-radius: 17px;
-        }
-        #bottom-nav button {
-            flex: 1; display: flex; flex-direction: column; align-items: center; gap: 3px;
-            padding: 7px 2px 6px; border: none; border-radius: 12px; background: transparent;
-            color: var(--text-dim); font-size: 0.68em; font-weight: 650;
-        }
-        #bottom-nav button.active { background: var(--accent); color: var(--on-accent); }
+        #bottom-nav { display: flex; position: fixed; left: 10px; right: 10px; bottom: calc(10px + var(--safe-b)); z-index: 20; padding: 4px; border-radius: 16px; background: var(--panel); }
+        #bottom-nav > button { display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 7px 2px 6px; font-size: 11px; border-radius: 12px; }
+        #bottom-nav > button.active { color: var(--on-inverse); }
+        #bottom-nav .seg-thumb { background: var(--inverse); border-radius: 12px; box-shadow: none; }
 
-        #action-bar { bottom: calc(80px + var(--safe-b)); max-width: calc(100vw - 20px); }
-        .act-btn { height: 42px; min-width: 42px; padding: 0 10px; }
-        .act-btn.primary { padding: 0 14px; }
+        #action-bar { bottom: calc(76px + var(--safe-b)); }
+        .act-btn { height: 40px; min-width: 40px; padding: 0 10px; }
         .act-btn .act-label-long, .act-btn kbd { display: none; }
-        #drawhint { bottom: calc(144px + var(--safe-b)); font-size: 0.8em; max-width: calc(100vw - 32px); overflow: hidden; text-overflow: ellipsis; }
+        #drawhint { bottom: calc(136px + var(--safe-b)); font-size: 12px; max-width: calc(100vw - 32px); overflow: hidden; text-overflow: ellipsis; }
 
-        #stats-dock, #stats-restore { display: none !important; }
-        #accuracy-badge { top: 112px; right: 12px; width: 124px; padding: 14px 12px 12px; transform: none; animation: popM 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); }
-        @keyframes popM { from { opacity: 0; transform: scale(0.85); } to { opacity: 1; transform: none; } }
+        #accuracy-badge { top: 112px; right: 12px; width: 120px; margin-top: 0; padding: 14px 12px 12px; }
         .acc-ring { width: 72px; height: 72px; }
-        #accuracy-pct { font-size: 1.2em; }
-        .overlay { padding: 12px; align-items: flex-end; }
-        .modal { padding: 18px; }
+        #accuracy-pct { font-size: 19px; }
+        .overlay { padding: 10px; align-items: flex-end; }
+        .modal { padding: 18px; animation-name: sheetIn; }
+        @keyframes sheetIn { from { transform: translateY(40px); opacity: 0; } to { transform: none; opacity: 1; } }
+        .help-modes { grid-template-columns: 1fr; }
     }
 
+    /* No transitions while the saved theme/layout is being applied on load. */
+    body.preload, body.preload *, body.preload *::before, body.preload *::after { transition: none !important; }
+
     @media (prefers-reduced-motion: reduce) {
-        *, *::before, *::after { animation: none !important; transition: none !important; }
+        *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
     }
 </style>
 </head>
-<body class="panel-open">
+<body class="panel-open preload">
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
     <defs>
         <symbol id="i-box" viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><path d="M3.27 6.96 12 12.01l8.73-5.05M12 22.08V12"/></symbol>
@@ -550,8 +501,14 @@
         <symbol id="i-x" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></symbol>
         <symbol id="i-down" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></symbol>
         <symbol id="i-reset" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></symbol>
-        <symbol id="i-pause" viewBox="0 0 24 24"><path d="M8 5v14M16 5v14"/></symbol>
+        <symbol id="i-pause" viewBox="0 0 24 24"><path d="M9 6v12M15 6v12"/></symbol>
         <symbol id="i-download" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></symbol>
+        <symbol id="i-flame" viewBox="0 0 24 24"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.07-2.14-.22-4.05 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.15.43-2.29 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></symbol>
+        <symbol id="i-award" viewBox="0 0 24 24"><circle cx="12" cy="8" r="6"/><path d="M15.48 12.89 17 22l-5-3-5 3 1.52-9.11"/></symbol>
+        <symbol id="i-target" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></symbol>
+        <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></symbol>
+        <symbol id="i-layers" viewBox="0 0 24 24"><path d="m12 2 10 5-10 5L2 7z"/><path d="m2 17 10 5 10-5M2 12l10 5 10-5"/></symbol>
+        <symbol id="i-spark" viewBox="0 0 24 24"><path d="M12 3v4M12 17v4M3 12h4M17 12h4M5.6 5.6l2.8 2.8M15.6 15.6l2.8 2.8M5.6 18.4l2.8-2.8M15.6 8.4l2.8-2.8"/></symbol>
     </defs>
 </svg>
 
@@ -560,7 +517,7 @@
 <canvas id="cv"></canvas>
 <canvas id="draw-cv" class="hidden"></canvas>
 
-<button id="ui-restore" class="glass hidden" data-i18n-aria="showUI" aria-label="Показать меню">
+<button id="ui-restore" class="surface hidden" data-i18n-aria="showUI" aria-label="Показать меню">
     <svg class="i"><use href="#i-menu"/></svg><span data-i18n="menu">Меню</span>
 </button>
 
@@ -573,7 +530,7 @@
     <span id="timer-pause-icon"><svg class="i"><use href="#i-pause"/></svg></span>
 </div>
 
-<div id="top-dock" class="glass">
+<div id="top-dock" class="surface">
     <button id="lang-toggle" class="icon-btn" aria-label="Switch language / Сменить язык">EN</button>
     <button id="sound-toggle" class="icon-btn" data-i18n-title="sound" data-i18n-aria="sound" aria-pressed="true"><svg class="i"><use href="#i-vol"/></svg></button>
     <button id="theme-toggle" class="icon-btn" data-i18n-title="theme" data-i18n-aria="theme"><svg class="i"><use href="#i-sun"/></svg></button>
@@ -582,7 +539,7 @@
     <button id="toggle-help" class="icon-btn" data-i18n-title="help" data-i18n-aria="help"><svg class="i"><use href="#i-help"/></svg></button>
 </div>
 
-<aside id="ui" class="glass" aria-label="Настройки">
+<aside id="ui" class="surface" aria-label="Настройки">
     <div class="panel-head">
         <div class="logo"><svg class="i"><use href="#i-box"/></svg></div>
         <div class="brand">
@@ -592,7 +549,7 @@
         <button id="hide-ui" class="icon-btn" data-i18n-title="hideUI" data-i18n-aria="hideUI"><svg class="i"><use href="#i-panel"/></svg></button>
     </div>
 
-    <nav id="tabs" aria-label="Режим">
+    <nav id="tabs" class="seg" aria-label="Режим">
         <button id="tab-practice" data-app-mode="practice" class="active"><svg class="i"><use href="#i-box"/></svg><span data-i18n="tabPractice">Практика</span></button>
         <button id="tab-draw" data-app-mode="draw"><svg class="i"><use href="#i-eye"/></svg><span data-i18n="tabDraw">Память</span></button>
         <button id="tab-lines" data-app-mode="lines"><svg class="i"><use href="#i-pen"/></svg><span data-i18n="tabLines">Линии</span></button>
@@ -602,16 +559,15 @@
     <div class="panel-body">
         <p class="mode-desc" id="mode-desc"></p>
 
-        <!-- Shape settings: shared by Practice, Memory and Ghost -->
         <section class="section" data-modes="practice draw ghost">
             <div class="section-title" data-i18n="secShape">Фигура</div>
-            <div class="segmented" id="shape-buttons">
+            <div class="seg" id="shape-buttons">
                 <button data-shape="cube" class="active" data-i18n="shapeCube">Куб</button>
                 <button data-shape="cylinder" data-i18n="shapeCylinder">Цилиндр</button>
             </div>
             <div class="field">
                 <span class="field-label" data-i18n="mode">Сложность ракурса</span>
-                <div class="segmented" id="mode-buttons">
+                <div class="seg" id="mode-buttons">
                     <button data-mode="1" data-i18n="m1">Простой</button>
                     <button data-mode="2" class="active" data-i18n="m2">Угловой</button>
                     <button data-mode="3" data-i18n="m3">Динамика</button>
@@ -623,12 +579,11 @@
             </button>
         </section>
 
-        <!-- Practice -->
         <section class="section" id="practice-controls" data-modes="practice">
             <div class="section-title" data-i18n="secScene">Сцена</div>
             <div class="field">
                 <span class="field-label" data-i18n="cubes">Количество объектов</span>
-                <div class="segmented" id="cubes-buttons">
+                <div class="seg" id="cubes-buttons">
                     <button data-cubes="1" class="active">1</button>
                     <button data-cubes="2">2</button>
                     <button data-cubes="3">3</button>
@@ -636,34 +591,35 @@
             </div>
             <div class="field">
                 <span class="field-label" data-i18n="type">Перспектива объектов</span>
-                <div class="segmented" id="persp-buttons">
+                <div class="seg" id="persp-buttons">
                     <button data-persp="same" class="active" data-i18n="same">Общая</button>
                     <button data-persp="diff" data-i18n="diff">Разная</button>
                 </div>
             </div>
             <button id="toggle-free" class="switch" role="switch" aria-checked="false">
-                <span class="switch-text"><span data-i18n="freeRot">Свободное вращение</span><small data-i18n="freeRotSub">Мышь / палец, колесо — зум</small></span>
+                <span class="switch-text"><span data-i18n="freeRot">Свободное вращение</span><small data-i18n="freeRotSub">Тяните мышью или пальцем, колесо — зум</small></span>
                 <span class="switch-track"></span>
             </button>
             <button id="toggle-timer" class="switch" role="switch" aria-checked="true">
                 <span class="switch-text"><span data-i18n="timerSwitch">Автосмена по таймеру</span><small data-i18n="timerSub">Клик по таймеру — пауза</small></span>
                 <span class="switch-track"></span>
             </button>
-            <div class="field sub-field" id="duration-field">
-                <span class="field-label" data-i18n="timer">Интервал</span>
-                <div class="range-row">
-                    <input type="range" id="duration-slider" min="1" max="120" step="1" value="10" aria-label="Interval">
-                    <label class="num-input"><input type="number" id="duration-input" min="1" max="3600" step="1" value="10"><span data-i18n="secondsUnit">сек</span></label>
+            <div class="collapse" id="duration-field"><div>
+                <div class="field sub-field">
+                    <span class="field-label" data-i18n="timer">Интервал</span>
+                    <div class="range-row">
+                        <input type="range" id="duration-slider" min="1" max="120" step="1" value="10" aria-label="Interval">
+                        <label class="num-input"><input type="number" id="duration-input" min="1" max="3600" step="1" value="10"><span data-i18n="secondsUnit">сек</span></label>
+                    </div>
                 </div>
-            </div>
+            </div></div>
         </section>
 
-        <!-- Memory test -->
         <section class="section" id="draw-controls" data-modes="draw">
             <div class="section-title" data-i18n="secTiming">Время</div>
             <div class="field">
                 <span class="field-label" data-i18n="previewLabel">Время показа</span>
-                <div class="segmented" id="preview-buttons">
+                <div class="seg" id="preview-buttons">
                     <button data-sec="2">2 с</button>
                     <button data-sec="3" class="active">3 с</button>
                     <button data-sec="5">5 с</button>
@@ -671,69 +627,74 @@
                 </div>
             </div>
             <button id="toggle-autocheck" class="switch" role="switch" aria-checked="false">
-                <span class="switch-text"><span data-i18n="autoCheck">Авто-проверка</span><small data-i18n="autoCheckSub">Проверить по истечении времени</small></span>
+                <span class="switch-text"><span data-i18n="autoCheck">Авто-проверка</span><small data-i18n="autoCheckSub">Проверить, когда выйдет время</small></span>
                 <span class="switch-track"></span>
             </button>
-            <div class="field sub-field hidden" id="autocheck-duration-wrap">
-                <span class="field-label" data-i18n="drawTimer">Время на рисование</span>
-                <div class="segmented" id="autocheck-duration-buttons">
-                    <button data-sec="5">5 с</button>
-                    <button data-sec="10" class="active">10 с</button>
-                    <button data-sec="15">15 с</button>
-                    <button data-sec="30">30 с</button>
+            <div class="collapse closed" id="autocheck-duration-wrap"><div>
+                <div class="field sub-field">
+                    <span class="field-label" data-i18n="drawTimer">Время на рисование</span>
+                    <div class="seg" id="autocheck-duration-buttons">
+                        <button data-sec="5">5 с</button>
+                        <button data-sec="10" class="active">10 с</button>
+                        <button data-sec="15">15 с</button>
+                        <button data-sec="30">30 с</button>
+                    </div>
                 </div>
-            </div>
+            </div></div>
         </section>
 
-        <!-- Lines -->
         <section class="section" id="lines-controls" data-modes="lines">
             <div class="section-title" data-i18n="secTarget">Образец</div>
-            <div class="segmented" id="line-subtype-buttons">
+            <div class="seg" id="line-subtype-buttons">
                 <button data-subtype="line" class="active" data-i18n="lineSubtypeLine">Линия</button>
                 <button data-subtype="ellipse" data-i18n="lineSubtypeEllipse">Эллипс</button>
             </div>
-            <div id="line-only-settings" class="section" style="padding:0;border:0;">
-                <div class="field">
-                    <span class="field-label" data-i18n="lineComplexity">Пресет сложности</span>
-                    <div class="segmented" id="line-complexity-buttons">
-                        <button data-complexity="0" data-i18n="m0lines">Прямая</button>
-                        <button data-complexity="1" data-i18n="m1lines">Простая</button>
-                        <button data-complexity="2" class="active" data-i18n="m2lines">Средняя</button>
-                        <button data-complexity="3" data-i18n="m3lines">Сложная</button>
+            <div class="collapse" id="line-only-settings"><div>
+                <div class="section">
+                    <div class="field">
+                        <span class="field-label" data-i18n="lineComplexity">Пресет сложности</span>
+                        <div class="seg" id="line-complexity-buttons">
+                            <button data-complexity="0" data-i18n="m0lines">Прямая</button>
+                            <button data-complexity="1" data-i18n="m1lines">Простая</button>
+                            <button data-complexity="2" class="active" data-i18n="m2lines">Средняя</button>
+                            <button data-complexity="3" data-i18n="m3lines">Сложная</button>
+                        </div>
+                    </div>
+                    <div class="field">
+                        <span class="field-label" data-i18n="lineBendsLabel">Изгибы</span>
+                        <div class="seg" id="line-bends-buttons">
+                            <button data-bends="0">0</button>
+                            <button data-bends="1">1</button>
+                            <button data-bends="2">2</button>
+                            <button data-bends="3" class="active">3</button>
+                            <button data-bends="4">4</button>
+                            <button data-bends="5">5</button>
+                        </div>
+                    </div>
+                    <div class="field">
+                        <span class="field-label" data-i18n="lineSharpnessLabel">Углы</span>
+                        <div class="seg" id="line-sharpness-buttons">
+                            <button data-sharp="0" data-i18n="lineSmooth">Плавные</button>
+                            <button data-sharp="0.5" class="active" data-i18n="lineMedium">Средние</button>
+                            <button data-sharp="1" data-i18n="lineSharp">Резкие</button>
+                        </div>
                     </div>
                 </div>
+            </div></div>
+            <div class="collapse closed" id="ellipse-only-settings"><div>
                 <div class="field">
-                    <span class="field-label" data-i18n="lineBendsLabel">Изгибы</span>
-                    <div class="segmented" id="line-bends-buttons">
-                        <button data-bends="0">0</button>
-                        <button data-bends="1">1</button>
-                        <button data-bends="2">2</button>
-                        <button data-bends="3" class="active">3</button>
-                        <button data-bends="4">4</button>
-                        <button data-bends="5">5</button>
+                    <span class="field-label" data-i18n="ellipseRatioLabel">Форма эллипса</span>
+                    <div class="seg" id="ellipse-ratio-buttons">
+                        <button data-eratio="random" class="active" data-i18n="ellipseRatioRandom">Любая</button>
+                        <button data-eratio="circle" data-i18n="ellipseRatioCircle">Круг</button>
+                        <button data-eratio="wide" data-i18n="ellipseRatioWide">Широкий</button>
+                        <button data-eratio="narrow" data-i18n="ellipseRatioNarrow">Узкий</button>
                     </div>
                 </div>
-                <div class="field">
-                    <span class="field-label" data-i18n="lineSharpnessLabel">Углы</span>
-                    <div class="segmented" id="line-sharpness-buttons">
-                        <button data-sharp="0" data-i18n="lineSmooth">Плавные</button>
-                        <button data-sharp="0.5" class="active" data-i18n="lineMedium">Средние</button>
-                        <button data-sharp="1" data-i18n="lineSharp">Резкие</button>
-                    </div>
-                </div>
-            </div>
-            <div id="ellipse-only-settings" class="field hidden">
-                <span class="field-label" data-i18n="ellipseRatioLabel">Форма эллипса</span>
-                <div class="segmented" id="ellipse-ratio-buttons">
-                    <button data-eratio="random" class="active" data-i18n="ellipseRatioRandom">Любая</button>
-                    <button data-eratio="circle" data-i18n="ellipseRatioCircle">Круг</button>
-                    <button data-eratio="wide" data-i18n="ellipseRatioWide">Широкий</button>
-                    <button data-eratio="narrow" data-i18n="ellipseRatioNarrow">Узкий</button>
-                </div>
-            </div>
+            </div></div>
             <div class="field">
                 <span class="field-label" data-i18n="lineRotationLabel">Поворот</span>
-                <div class="segmented" id="line-rotation-buttons">
+                <div class="seg" id="line-rotation-buttons">
                     <button data-rot="0" class="active" data-i18n="lineRotOff">Нет</button>
                     <button data-rot="1" data-i18n="lineRotMod">Умеренный</button>
                     <button data-rot="2" data-i18n="lineRotFull">Любой</button>
@@ -741,7 +702,7 @@
             </div>
             <div class="field">
                 <span class="field-label" data-i18n="lineSizeLabel">Размер</span>
-                <div class="segmented" id="line-size-buttons">
+                <div class="seg" id="line-size-buttons">
                     <button data-size="0.45">XS</button>
                     <button data-size="0.60">S</button>
                     <button data-size="0.75" class="active">M</button>
@@ -751,20 +712,19 @@
             </div>
         </section>
 
-        <!-- Ghost -->
         <section class="section" id="ghost-controls" data-modes="ghost">
             <div class="section-title" data-i18n="secGhost">Подсказка</div>
             <div class="field">
-                <span class="field-label"><span data-i18n="ghostAnchorLabel">Опорные грани</span><b id="ghost-anchor-val">1</b></span>
-                <input type="range" id="ghost-anchor-slider" min="0" max="6" step="1" value="1" aria-label="Anchor faces">
+                <span class="field-label" data-i18n="ghostAnchorLabel">Опора</span>
+                <div class="seg" id="ghost-anchor-buttons">
+                    <button data-anchor="0" data-i18n="anchor0">Нет</button>
+                    <button data-anchor="1" class="active" data-i18n="anchor1">1 грань</button>
+                    <button data-anchor="2" data-i18n="anchor2">2 грани</button>
+                </div>
             </div>
-            <button id="toggle-ghost-transparent" class="switch" role="switch" aria-checked="false">
-                <span class="switch-text"><span data-i18n="ghostTransparent">Все грани пунктиром</span><small data-i18n="ghostTransparentSub">Без сплошной опоры</small></span>
-                <span class="switch-track"></span>
-            </button>
             <div class="field">
                 <span class="field-label" data-i18n="ghostVisibleLabel">Пунктир виден</span>
-                <div class="segmented" id="ghost-preview-buttons">
+                <div class="seg" id="ghost-preview-buttons">
                     <button data-sec="2">2 с</button>
                     <button data-sec="4" class="active">4 с</button>
                     <button data-sec="8">8 с</button>
@@ -772,41 +732,46 @@
                 </div>
             </div>
             <button id="toggle-ghost-autocheck" class="switch" role="switch" aria-checked="false">
-                <span class="switch-text"><span data-i18n="autoCheck">Авто-проверка</span><small data-i18n="autoCheckSub">Проверить по истечении времени</small></span>
+                <span class="switch-text"><span data-i18n="autoCheck">Авто-проверка</span><small data-i18n="autoCheckSub">Проверить, когда выйдет время</small></span>
                 <span class="switch-track"></span>
             </button>
-            <div class="field sub-field hidden" id="ghost-autocheck-duration-wrap">
-                <span class="field-label" data-i18n="drawTimer">Время на рисование</span>
-                <div class="segmented" id="ghost-autocheck-duration-buttons">
-                    <button data-sec="8">8 с</button>
-                    <button data-sec="12" class="active">12 с</button>
-                    <button data-sec="20">20 с</button>
-                    <button data-sec="40">40 с</button>
+            <div class="collapse closed" id="ghost-autocheck-duration-wrap"><div>
+                <div class="field sub-field">
+                    <span class="field-label" data-i18n="drawTimer">Время на рисование</span>
+                    <div class="seg" id="ghost-autocheck-duration-buttons">
+                        <button data-sec="8">8 с</button>
+                        <button data-sec="12" class="active">12 с</button>
+                        <button data-sec="20">20 с</button>
+                        <button data-sec="40">40 с</button>
+                    </div>
                 </div>
-            </div>
+            </div></div>
         </section>
 
-        <!-- Appearance -->
-        <details class="section" id="appearance">
-            <summary><span class="section-title" data-i18n="appearance">Вид и цвета</span><svg class="i"><use href="#i-down"/></svg></summary>
-            <div class="field">
-                <span class="field-label" data-i18n="gridLabel">Сетка</span>
-                <div class="segmented" id="grid-buttons">
-                    <button data-grid="off" class="active" data-i18n="gridOff">Нет</button>
-                    <button data-grid="square" data-i18n="gridSquare">Клетка</button>
-                    <button data-grid="iso" data-i18n="gridIso">Изо</button>
-                    <button data-grid="perspective" data-i18n="gridPersp">Персп.</button>
+        <section class="section" id="appearance">
+            <button class="disclosure" id="appearance-toggle" aria-expanded="false"><span class="section-title" data-i18n="appearance">Вид и цвета</span><svg class="i"><use href="#i-down"/></svg></button>
+            <div class="collapse closed" id="appearance-body"><div>
+                <div class="appearance-inner">
+                    <div class="field">
+                        <span class="field-label" data-i18n="gridLabel">Сетка</span>
+                        <div class="seg" id="grid-buttons">
+                            <button data-grid="off" class="active" data-i18n="gridOff">Точки</button>
+                            <button data-grid="square" data-i18n="gridSquare">Клетка</button>
+                            <button data-grid="iso" data-i18n="gridIso">Изо</button>
+                            <button data-grid="perspective" data-i18n="gridPersp">Персп.</button>
+                        </div>
+                    </div>
+                    <div class="palette">
+                        <label class="color-row"><span class="color-dot"><input type="color" id="color-accent" value="#ff5c39"></span><span data-i18n="colorAccent">Акцент</span></label>
+                        <label class="color-row"><span class="color-dot"><input type="color" id="color-target" value="#3ddc97"></span><span data-i18n="colorTarget">Эталон</span></label>
+                        <label class="color-row"><span class="color-dot"><input type="color" id="color-cube1" value="#ededf0"></span><span data-i18n="colorCube1">Объект 1</span></label>
+                        <label class="color-row"><span class="color-dot"><input type="color" id="color-cube2" value="#4cb8ff"></span><span data-i18n="colorCube2">Объект 2</span></label>
+                        <label class="color-row"><span class="color-dot"><input type="color" id="color-cube3" value="#ffb020"></span><span data-i18n="colorCube3">Объект 3</span></label>
+                    </div>
+                    <button id="reset-colors" class="link-btn" data-i18n="resetColors">Сбросить цвета</button>
                 </div>
-            </div>
-            <div class="palette">
-                <label class="color-row"><span class="color-dot"><input type="color" id="color-accent" value="#6366f1"></span><span data-i18n="colorAccent">Акцент</span></label>
-                <label class="color-row"><span class="color-dot"><input type="color" id="color-target" value="#f43f5e"></span><span data-i18n="colorTarget">Эталон</span></label>
-                <label class="color-row"><span class="color-dot"><input type="color" id="color-cube1" value="#f4f4f5"></span><span data-i18n="colorCube1">Объект 1</span></label>
-                <label class="color-row"><span class="color-dot"><input type="color" id="color-cube2" value="#38bdf8"></span><span data-i18n="colorCube2">Объект 2</span></label>
-                <label class="color-row"><span class="color-dot"><input type="color" id="color-cube3" value="#f59e0b"></span><span data-i18n="colorCube3">Объект 3</span></label>
-            </div>
-            <button id="reset-colors" class="link-btn" data-i18n="resetColors">Сбросить цвета</button>
-        </details>
+            </div></div>
+        </section>
     </div>
 
     <div class="panel-foot">
@@ -815,8 +780,7 @@
     </div>
 </aside>
 
-<!-- Context actions -->
-<div id="action-bar" class="glass">
+<div id="action-bar" class="surface">
     <button id="act-prev" class="act-btn icon-only" data-modes="practice" data-i18n-title="prevPose" data-i18n-aria="prevPose"><svg class="i"><use href="#i-left"/></svg></button>
     <button id="act-undo" class="act-btn icon-only" data-modes="draw ghost" data-i18n-title="undo" data-i18n-aria="undo"><svg class="i"><use href="#i-undo"/></svg></button>
     <button id="act-redo" class="act-btn icon-only" data-modes="draw ghost" data-i18n-title="redo" data-i18n-aria="redo"><svg class="i"><use href="#i-redo"/></svg></button>
@@ -828,32 +792,33 @@
 </div>
 
 <div id="drawhint" class="hidden"></div>
+<div id="toast" class="surface" role="status" aria-live="polite"><svg class="i"><use href="#i-spark"/></svg><span id="toast-text"></span></div>
 
-<div id="stats-dock" class="glass">
+<div id="stats-dock" class="surface">
     <div class="stat" id="streak-badge">
-        <span class="stat-emoji flame-icon" id="flame-icon">🔥</span>
+        <svg class="i stat-icon" id="flame-icon"><use href="#i-flame"/></svg>
         <div class="stat-col"><span class="stat-num" id="stat-streak">0</span><span class="stat-lbl" data-i18n="statStreak">Серия</span></div>
     </div>
     <div class="stat" id="level-badge">
-        <span class="stat-emoji" id="medal-icon">🥉</span>
+        <svg class="i stat-icon lit" id="medal-icon"><use href="#i-award"/></svg>
         <div class="stat-col"><span class="stat-num" id="stat-level">1</span><span class="stat-lbl" data-i18n="level">Уровень</span></div>
     </div>
     <span class="stats-sep"></span>
     <div class="stat"><div class="stat-col"><span class="stat-num" id="stat-today">0</span><span class="stat-lbl" data-i18n="statToday">Сегодня</span></div></div>
     <div class="stat"><div class="stat-col"><span class="stat-num" id="stat-total">0</span><span class="stat-lbl" data-i18n="statTotal">Всего</span></div></div>
-    <button id="hide-stats" class="icon-btn" style="width:30px;height:30px" data-i18n-title="hideStats" data-i18n-aria="hideStats"><svg class="i" style="width:15px;height:15px"><use href="#i-x"/></svg></button>
+    <button id="hide-stats" class="icon-btn" style="width:28px;height:28px" data-i18n-title="hideStats" data-i18n-aria="hideStats"><svg class="i" style="width:14px;height:14px"><use href="#i-x"/></svg></button>
     <div class="level-progress-wrap"><div class="level-progress-fill" id="level-progress-fill"></div></div>
 </div>
-<button id="stats-restore" class="glass icon-btn hidden" data-i18n-title="showStats" data-i18n-aria="showStats"><svg class="i"><use href="#i-chart"/></svg></button>
+<button id="stats-restore" class="surface icon-btn hidden" data-i18n-title="showStats" data-i18n-aria="showStats"><svg class="i"><use href="#i-chart"/></svg></button>
 
-<nav id="bottom-nav" class="glass" aria-label="Режим">
+<nav id="bottom-nav" class="seg surface" aria-label="Режим">
     <button data-app-mode="practice" class="active"><svg class="i"><use href="#i-box"/></svg><span data-i18n="tabPractice">Практика</span></button>
     <button data-app-mode="draw"><svg class="i"><use href="#i-eye"/></svg><span data-i18n="tabDraw">Память</span></button>
     <button data-app-mode="lines"><svg class="i"><use href="#i-pen"/></svg><span data-i18n="tabLines">Линии</span></button>
     <button data-app-mode="ghost"><svg class="i"><use href="#i-ghost"/></svg><span data-i18n="tabGhost">Призрак</span></button>
 </nav>
 
-<div id="accuracy-badge" class="glass hidden" aria-live="polite">
+<div id="accuracy-badge" class="surface hidden" aria-live="polite">
     <div class="acc-ring">
         <svg viewBox="0 0 100 100"><circle class="bg" cx="50" cy="50" r="42"/><circle class="fg" id="acc-ring-fg" cx="50" cy="50" r="42"/></svg>
         <div id="accuracy-pct">0%</div>
@@ -862,7 +827,6 @@
     <div id="accuracy-label" data-i18n="accuracy">Точность</div>
 </div>
 
-<!-- HELP -->
 <div id="help-overlay" class="overlay">
     <div class="modal" role="dialog" aria-modal="true" aria-labelledby="help-title">
         <div class="modal-head">
@@ -873,10 +837,10 @@
             <button class="icon-btn" data-close aria-label="Close"><svg class="i"><use href="#i-x"/></svg></button>
         </div>
         <div class="help-modes">
-            <div class="help-mode"><svg class="i"><use href="#i-box"/></svg><div><b data-i18n="tabPractice">Практика</b><span data-i18n="descPractice"></span></div></div>
-            <div class="help-mode"><svg class="i"><use href="#i-eye"/></svg><div><b data-i18n="tabDraw">Память</b><span data-i18n="drawHelp"></span></div></div>
-            <div class="help-mode"><svg class="i"><use href="#i-pen"/></svg><div><b data-i18n="tabLines">Линии</b><span data-i18n="lineHelpAuto"></span></div></div>
-            <div class="help-mode"><svg class="i"><use href="#i-ghost"/></svg><div><b data-i18n="tabGhost">Призрак</b><span data-i18n="ghostHelp"></span></div></div>
+            <div class="help-mode"><svg class="i"><use href="#i-box"/></svg><b data-i18n="tabPractice">Практика</b><span data-i18n="descPractice"></span></div>
+            <div class="help-mode"><svg class="i"><use href="#i-eye"/></svg><b data-i18n="tabDraw">Память</b><span data-i18n="drawHelp"></span></div>
+            <div class="help-mode"><svg class="i"><use href="#i-pen"/></svg><b data-i18n="tabLines">Линии</b><span data-i18n="lineHelpAuto"></span></div>
+            <div class="help-mode"><svg class="i"><use href="#i-ghost"/></svg><b data-i18n="tabGhost">Призрак</b><span data-i18n="ghostHelp"></span></div>
         </div>
         <div class="modal-section" data-i18n="hotkeysTitle">Горячие клавиши</div>
         <div class="hk-list">
@@ -904,7 +868,6 @@
     </div>
 </div>
 
-<!-- SESSION SUMMARY -->
 <div id="summary-modal-overlay" class="overlay">
     <div id="summary-modal" class="modal" role="dialog" aria-modal="true" aria-labelledby="sum-title">
         <div class="modal-head">
@@ -914,9 +877,8 @@
             </div>
             <button class="icon-btn" id="sum-close" data-close aria-label="Close"><svg class="i"><use href="#i-x"/></svg></button>
         </div>
-
         <div class="sum-hero">
-            <div class="sum-hero-emoji" id="sum-hero-emoji">🎯</div>
+            <div class="sum-hero-icon"><svg class="i"><use href="#i-spark"/></svg></div>
             <div class="sum-hero-text">
                 <div class="sum-hero-label" id="sum-hero-label">Продуктивность</div>
                 <div class="sum-hero-value" id="sum-productivity">—</div>
@@ -924,35 +886,35 @@
                 <div id="sum-vs-yesterday" style="margin-top:6px;"></div>
             </div>
         </div>
-
-        <div class="modal-section" id="sum-section-today">Статистика</div>
-        <div class="sum-stat-row">
-            <div class="sum-stat-left"><span class="sum-stat-icon">✏️</span><span class="sum-stat-name" id="sum-lbl-drawn">Нарисовано фигур</span></div>
-            <div class="sum-stat-right"><span class="sum-delta" id="sum-drawn-delta"></span><span class="sum-stat-val" id="sum-drawn-today">0</span></div>
+        <div>
+            <div class="modal-section" id="sum-section-today">Статистика</div>
+            <div class="sum-stat-row">
+                <div class="sum-stat-left"><span class="sum-stat-icon"><svg class="i"><use href="#i-pen"/></svg></span><span class="sum-stat-name" id="sum-lbl-drawn">Нарисовано фигур</span></div>
+                <div class="sum-stat-right"><span class="sum-delta" id="sum-drawn-delta"></span><span class="sum-stat-val" id="sum-drawn-today">0</span></div>
+            </div>
+            <div class="sum-stat-row" id="sum-acc-row">
+                <div class="sum-stat-left"><span class="sum-stat-icon"><svg class="i"><use href="#i-target"/></svg></span><span class="sum-stat-name" id="sum-lbl-acc">Средняя точность</span></div>
+                <div class="sum-stat-right"><span class="sum-delta" id="sum-acc-delta"></span><span class="sum-stat-val" id="sum-acc-today">—</span></div>
+            </div>
+            <div class="sum-acc-bar-wrap" id="sum-acc-bar-wrap" style="display:none"><div class="sum-acc-bar-fill" id="sum-acc-bar" style="width:0%"></div></div>
+            <div class="sum-stat-row">
+                <div class="sum-stat-left"><span class="sum-stat-icon"><svg class="i"><use href="#i-flame"/></svg></span><span class="sum-stat-name" id="sum-lbl-streak">Серия дней</span></div>
+                <div class="sum-stat-right"><span class="sum-delta" id="sum-streak-delta"></span><span class="sum-stat-val" id="sum-streak">0</span></div>
+            </div>
+            <div class="sum-stat-row">
+                <div class="sum-stat-left"><span class="sum-stat-icon"><svg class="i"><use href="#i-clock"/></svg></span><span class="sum-stat-name" id="sum-lbl-time">Время сегодня</span></div>
+                <div class="sum-stat-right"><span class="sum-stat-val" id="sum-time-today">0с</span></div>
+            </div>
+            <div class="sum-stat-row">
+                <div class="sum-stat-left"><span class="sum-stat-icon"><svg class="i"><use href="#i-award"/></svg></span><span class="sum-stat-name" id="sum-lbl-total">Всего за всё время</span></div>
+                <div class="sum-stat-right"><span class="sum-stat-val" id="sum-total">0</span></div>
+            </div>
         </div>
-        <div class="sum-stat-row" id="sum-acc-row">
-            <div class="sum-stat-left"><span class="sum-stat-icon">🎯</span><span class="sum-stat-name" id="sum-lbl-acc">Средняя точность</span></div>
-            <div class="sum-stat-right"><span class="sum-delta" id="sum-acc-delta"></span><span class="sum-stat-val" id="sum-acc-today">—</span></div>
+        <div>
+            <div class="modal-section" id="sum-section-breakdown">По режимам</div>
+            <div id="sum-breakdown-list"></div>
         </div>
-        <div class="sum-acc-bar-wrap" id="sum-acc-bar-wrap" style="display:none"><div class="sum-acc-bar-fill" id="sum-acc-bar" style="width:0%"></div></div>
-        <div class="sum-stat-row">
-            <div class="sum-stat-left"><span class="sum-stat-icon">🔥</span><span class="sum-stat-name" id="sum-lbl-streak">Серия дней</span></div>
-            <div class="sum-stat-right"><span class="sum-delta" id="sum-streak-delta"></span><span class="sum-stat-val" id="sum-streak">0</span></div>
-        </div>
-        <div class="sum-stat-row">
-            <div class="sum-stat-left"><span class="sum-stat-icon">⏱️</span><span class="sum-stat-name" id="sum-lbl-time">Время сегодня</span></div>
-            <div class="sum-stat-right"><span class="sum-stat-val" id="sum-time-today">0с</span></div>
-        </div>
-        <div class="sum-stat-row">
-            <div class="sum-stat-left"><span class="sum-stat-icon" id="sum-level-icon">🏆</span><span class="sum-stat-name" id="sum-lbl-total">Всего за всё время</span></div>
-            <div class="sum-stat-right"><span class="sum-stat-val" id="sum-total">0</span></div>
-        </div>
-
-        <div class="modal-section" id="sum-section-breakdown">По режимам</div>
-        <div id="sum-breakdown-list"></div>
-
         <div class="sum-banner" id="sum-banner"></div>
-
         <button id="sum-export-json" class="btn"><svg class="i"><use href="#i-download"/></svg><span data-i18n="exportJson">Экспорт статистики (JSON)</span></button>
     </div>
 </div>
@@ -1028,7 +990,7 @@ let ghostAutoCheckDuration = 12000;     // ms allowed to draw before auto-check 
 let ghostAutoCheckDeadline = 0;
 let ghostNextTime = 0;                  // auto-advance delay after a check, like other modes
 let ghostAnchorFaces = 1;               // 0–6 cube faces treated as a permanent solid anchor
-let ghostAllTransparent = false;        // override: render every face as dashed/translucent
+const reduceMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
 
 // Practice-mode pose history: lets the user step back/forward through
 // previously generated poses with the ← / → buttons instead of only ever
@@ -1085,7 +1047,7 @@ const translations = {
         descPractice:"Смотрите на фигуру и рисуйте её на бумаге или планшете. Новая фигура появляется по таймеру или по пробелу.",
         drawHelp:"Фигура показывается на несколько секунд и исчезает. Нарисуйте её по памяти прямо на экране и нажмите «Проверить».",
         lineHelpAuto:"Обведите пунктирный образец одним движением — проверка и следующий образец появляются сразу.",
-        ghostHelp:"Часть фигуры дана сплошной опорой, остальное — пунктиром, который скоро исчезнет. Дорисуйте фигуру целиком.",
+        ghostHelp:"Видимые грани фигуры: часть дана сплошной опорой, остальное — пунктиром, который скоро исчезнет. Дорисуйте внешний контур — внутренние рёбра не нужны.",
         secShape:"Фигура", secScene:"Сцена", secTiming:"Время", secTarget:"Образец", secGhost:"Подсказка",
         shapeCube:"Куб", shapeCylinder:"Цилиндр",
         mode:"Сложность ракурса", m1:"Простой", m2:"Угловой", m3:"Динамика",
@@ -1102,9 +1064,9 @@ const translations = {
         ellipseRatioLabel:"Форма эллипса", ellipseRatioRandom:"Любая", ellipseRatioCircle:"Круг", ellipseRatioWide:"Широкий", ellipseRatioNarrow:"Узкий",
         lineRotationLabel:"Поворот", lineRotOff:"Нет", lineRotMod:"Умеренный", lineRotFull:"Любой",
         lineSizeLabel:"Размер",
-        ghostAnchorLabel:"Опорные грани", ghostTransparent:"Все грани пунктиром", ghostTransparentSub:"Без сплошной опоры",
+        ghostAnchorLabel:"Опора", anchor0:"Нет", anchor1:"1 грань", anchor2:"2 грани",
         ghostVisibleLabel:"Пунктир виден", always:"Всегда",
-        appearance:"Вид и цвета", gridLabel:"Сетка", gridOff:"Нет", gridSquare:"Клетка", gridIso:"Изо", gridPersp:"Персп.",
+        appearance:"Вид и цвета", gridLabel:"Фон", gridOff:"Точки", gridSquare:"Клетка", gridIso:"Изо", gridPersp:"Персп.",
         colorAccent:"Акцент", colorTarget:"Эталон", colorCube1:"Объект 1", colorCube2:"Объект 2", colorCube3:"Объект 3",
         resetColors:"Сбросить цвета",
         cubesDrawn:"За сессию:", resetCount:"Сбросить счётчик сессии",
@@ -1122,7 +1084,8 @@ const translations = {
         hotkeysTitle:"Горячие клавиши", hk1:"Новая фигура", hkCheck:"Проверить рисунок", hkUndo:"Отменить / повторить штрих",
         hkPose:"Предыдущий / следующий ракурс", hkModes:"Переключить режим", hk3:"Пауза таймера", hk4:"Сброс камеры",
         hkPanel:"Скрыть / показать панель", hk2:"Полный экран", author:"Автор",
-        exportJson:"Экспорт статистики (JSON)", noChange:"без изменений"
+        exportJson:"Экспорт статистики (JSON)", noChange:"без изменений",
+        toastDrawFirst:"Сначала нарисуйте фигуру", toastLevel:"Новый уровень — {n}", toastStreak:"Серия: {n} дн. подряд"
     },
     en: {
         subtitle:"Perspective drawing trainer", menu:"Menu", showUI:"Show menu", hideUI:"Hide panel",
@@ -1130,7 +1093,7 @@ const translations = {
         descPractice:"Look at the shape and draw it on paper or a tablet. A new shape appears on a timer or when you press Space.",
         drawHelp:"The shape is shown for a few seconds, then hidden. Draw it from memory right on the screen and press Check.",
         lineHelpAuto:"Trace the dashed reference in one stroke — it's scored instantly and the next one appears.",
-        ghostHelp:"Part of the shape is a solid anchor, the rest is a dashed guide that soon fades. Finish the whole shape.",
+        ghostHelp:"The shape's visible faces: some are a solid anchor, the rest a dashed guide that soon fades. Finish the outer outline — hidden edges aren't needed.",
         secShape:"Shape", secScene:"Scene", secTiming:"Timing", secTarget:"Reference", secGhost:"Guide",
         shapeCube:"Cube", shapeCylinder:"Cylinder",
         mode:"Angle complexity", m1:"Basic", m2:"Angled", m3:"Dynamic",
@@ -1147,9 +1110,9 @@ const translations = {
         ellipseRatioLabel:"Ellipse shape", ellipseRatioRandom:"Any", ellipseRatioCircle:"Circle", ellipseRatioWide:"Wide", ellipseRatioNarrow:"Narrow",
         lineRotationLabel:"Rotation", lineRotOff:"None", lineRotMod:"Moderate", lineRotFull:"Any",
         lineSizeLabel:"Size",
-        ghostAnchorLabel:"Anchor faces", ghostTransparent:"All faces dashed", ghostTransparentSub:"No solid anchor",
+        ghostAnchorLabel:"Anchor", anchor0:"None", anchor1:"1 face", anchor2:"2 faces",
         ghostVisibleLabel:"Guide visible for", always:"Always",
-        appearance:"Look & colors", gridLabel:"Grid", gridOff:"Off", gridSquare:"Square", gridIso:"Iso", gridPersp:"Persp.",
+        appearance:"Look & colors", gridLabel:"Background", gridOff:"Dots", gridSquare:"Square", gridIso:"Iso", gridPersp:"Persp.",
         colorAccent:"Accent", colorTarget:"Reference", colorCube1:"Object 1", colorCube2:"Object 2", colorCube3:"Object 3",
         resetColors:"Reset colors",
         cubesDrawn:"This session:", resetCount:"Reset session counter",
@@ -1167,7 +1130,8 @@ const translations = {
         hotkeysTitle:"Hotkeys", hk1:"New shape", hkCheck:"Check drawing", hkUndo:"Undo / redo stroke",
         hkPose:"Previous / next pose", hkModes:"Switch mode", hk3:"Pause timer", hk4:"Reset camera",
         hkPanel:"Hide / show panel", hk2:"Fullscreen", author:"Author",
-        exportJson:"Export stats (JSON)", noChange:"no change"
+        exportJson:"Export stats (JSON)", noChange:"no change",
+        toastDrawFirst:"Draw the shape first", toastLevel:"Level {n} reached", toastStreak:"{n}-day streak"
     }
 };
 const tr = key => translations[lang][key] ?? key;
@@ -1189,6 +1153,7 @@ function updateArea() {
     const panelOpen = !uiPanel.classList.contains("minimized") && !isMobile();
     AX = panelOpen ? PANEL_W : 0;
     AW = W - AX;
+    setIcon(document.getElementById("hide-ui"), isMobile() ? "i-x" : "i-panel");
     CY = isMobile() ? H * 0.46 : H / 2;
     updateViewScale();
 }
@@ -1242,35 +1207,80 @@ document.getElementById("hide-stats").onclick = () => setStatsOpen(false);
 statsRestoreBtn.onclick = () => setStatsOpen(true);
 if(store.get("pbt_stats_hidden") === "1") setStatsOpen(false);
 
-// ── SOUND FEEDBACK (Web Audio API) ──────────────────────────────────────────
-// Synthesized beeps — no audio files to host. AudioContext is created lazily
-// on first use since browsers block audio until a user gesture.
+// ── SOUND (Web Audio API) ───────────────────────────────────────────────────
+// Soft, synthesized UI sounds: marimba-like plucks (sine + a fast-decaying
+// 4th partial) and filtered noise clicks, through a gentle lowpass, a short
+// echo and a compressor — no audio files, no harsh square/sawtooth tones.
+// The context is created lazily since browsers block audio until a gesture.
+let sfxOut = null;
 function getAudioCtx(){
-    if(!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    if(!audioCtx){
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        const comp = audioCtx.createDynamicsCompressor();
+        comp.threshold.value = -18; comp.ratio.value = 4;
+        const tone = audioCtx.createBiquadFilter();
+        tone.type = 'lowpass'; tone.frequency.value = 5200;
+        sfxOut = audioCtx.createGain(); sfxOut.gain.value = 0.9;
+        // Short, dark echo for a bit of air.
+        const delay = audioCtx.createDelay(); delay.delayTime.value = 0.11;
+        const fb = audioCtx.createGain(); fb.gain.value = 0.22;
+        const damp = audioCtx.createBiquadFilter(); damp.type = 'lowpass'; damp.frequency.value = 2000;
+        const wet = audioCtx.createGain(); wet.gain.value = 0.16;
+        sfxOut.connect(tone); tone.connect(comp);
+        sfxOut.connect(delay); delay.connect(damp); damp.connect(fb); fb.connect(delay); damp.connect(wet); wet.connect(comp);
+        comp.connect(audioCtx.destination);
+    }
     if(audioCtx.state === 'suspended') audioCtx.resume();
     return audioCtx;
 }
-function beep(freq, duration, type, gainPeak, delay){
-    if(!soundEnabled) return;
-    try{
-        const ctxA = getAudioCtx();
-        const osc = ctxA.createOscillator(), gain = ctxA.createGain();
-        osc.type = type || 'sine'; osc.frequency.value = freq;
-        osc.connect(gain); gain.connect(ctxA.destination);
-        const t0 = ctxA.currentTime + (delay || 0);
-        gain.gain.setValueAtTime(0.0001, t0);
-        gain.gain.linearRampToValueAtTime(gainPeak != null ? gainPeak : 0.12, t0 + 0.01);
-        gain.gain.exponentialRampToValueAtTime(0.0001, t0 + duration);
-        osc.start(t0); osc.stop(t0 + duration + 0.03);
-    }catch(_){}
+function pluck(freq, { at = 0, dur = 0.35, gain = 0.06, glide = 0, bright = 0.35 } = {}){
+    const ac = getAudioCtx(), t0 = ac.currentTime + 0.005 + at;
+    const env = ac.createGain();
+    env.gain.setValueAtTime(0.0001, t0);
+    env.gain.linearRampToValueAtTime(gain, t0 + 0.006);
+    env.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
+    env.connect(sfxOut);
+    const partials = [[1, 1, dur], [4, bright, dur * 0.25]];
+    for(const [mult, amp, len] of partials){
+        const o = ac.createOscillator(), g = ac.createGain();
+        o.type = 'sine';
+        o.frequency.setValueAtTime(freq * mult, t0);
+        if(glide) o.frequency.exponentialRampToValueAtTime(freq * mult * glide, t0 + dur * 0.5);
+        g.gain.setValueAtTime(amp, t0);
+        g.gain.exponentialRampToValueAtTime(0.0001, t0 + len);
+        o.connect(g); g.connect(env);
+        o.start(t0); o.stop(t0 + dur + 0.05);
+    }
 }
+let noiseBuf = null;
+function click({ at = 0, freq = 2600, q = 1.2, gain = 0.05, dur = 0.03 } = {}){
+    const ac = getAudioCtx(), t0 = ac.currentTime + 0.005 + at;
+    if(!noiseBuf){
+        noiseBuf = ac.createBuffer(1, Math.round(ac.sampleRate * 0.1), ac.sampleRate);
+        const d = noiseBuf.getChannelData(0);
+        for(let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
+    }
+    const src = ac.createBufferSource(), bp = ac.createBiquadFilter(), g = ac.createGain();
+    src.buffer = noiseBuf; bp.type = 'bandpass'; bp.frequency.value = freq; bp.Q.value = q;
+    g.gain.setValueAtTime(gain, t0); g.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
+    src.connect(bp); bp.connect(g); g.connect(sfxOut);
+    src.start(t0); src.stop(t0 + dur + 0.02);
+}
+// Notes: C5 523.25, D5 587.33, E5 659.25, G5 783.99, A5 880, C6 1046.5
+const SOUNDS = {
+    tick:     () => { click({ freq: 3200, gain: 0.035, dur: 0.022 }); pluck(1567.98, { dur: 0.06, gain: 0.012, bright: 0 }); },
+    generate: () => { click({ freq: 1800, gain: 0.025, dur: 0.04, q: 0.7 }); pluck(587.33, { dur: 0.22, gain: 0.035, glide: 1.5, bright: 0.15 }); },
+    success:  () => { pluck(659.25, { gain: 0.05 }); pluck(783.99, { at: 0.07, gain: 0.045 }); pluck(1046.5, { at: 0.14, dur: 0.6, gain: 0.04 }); },
+    great:    () => { [523.25, 659.25, 783.99, 1046.5, 1318.5].forEach((f, i) => pluck(f, { at: i * 0.06, dur: 0.7, gain: 0.04 })); },
+    fail:     () => { pluck(392, { gain: 0.045, dur: 0.3, bright: 0.1 }); pluck(311.13, { at: 0.11, gain: 0.04, dur: 0.45, bright: 0.1 }); },
+    undo:     () => click({ freq: 1400, gain: 0.04, dur: 0.035, q: 2 }),
+    toggle:   () => click({ freq: 2200, gain: 0.03, dur: 0.025, q: 3 }),
+    open:     () => pluck(880, { dur: 0.16, gain: 0.02, glide: 1.25, bright: 0 }),
+    levelup:  () => { [659.25, 783.99, 987.77, 1318.5].forEach((f, i) => pluck(f, { at: i * 0.08, dur: 0.8, gain: 0.045 })); }
+};
 function playSound(kind){
-    if(!soundEnabled) return;
-    if(kind === 'tick') beep(880, 0.05, 'square', 0.06);
-    else if(kind === 'generate') beep(520, 0.09, 'triangle', 0.09);
-    else if(kind === 'success'){ beep(660, 0.09, 'sine', 0.1); beep(880, 0.14, 'sine', 0.09, 0.09); }
-    else if(kind === 'fail') beep(180, 0.18, 'sawtooth', 0.08);
-    else if(kind === 'undo') beep(340, 0.06, 'square', 0.05);
+    if(!soundEnabled || !SOUNDS[kind]) return;
+    try { SOUNDS[kind](); } catch(_) {}
 }
 const soundToggleBtn = document.getElementById("sound-toggle");
 function setIcon(btn, id){ btn.querySelector("use").setAttribute("href", "#" + id); }
@@ -1282,7 +1292,7 @@ soundToggleBtn.onclick = () => {
     soundEnabled = !soundEnabled;
     store.set("pbt_sound", soundEnabled ? "1" : "0");
     updateSoundBtn();
-    if(soundEnabled) beep(660, 0.08, 'sine', 0.1);
+    playSound('toggle');
 };
 updateSoundBtn();
 
@@ -1296,7 +1306,10 @@ timerRingFg.style.strokeDasharray = TIMER_RING_CIRC;
 // remaining, used to trigger a tick sound during the final 3 seconds.
 // A null fraction means "no countdown right now" and fades the timer out.
 function setTimerText(text, fraction, remSeconds){
-    timerTextEl.textContent = text;
+    if(timerTextEl.textContent !== String(text)){
+        timerTextEl.textContent = text;
+        if(text !== "") restartAnim(timerTextEl, "tick");
+    }
     timerDisplay.classList.toggle("idle", fraction == null);
     if(fraction == null){
         timerRingFg.style.strokeDashoffset = TIMER_RING_CIRC;
@@ -1317,9 +1330,47 @@ function setTimerText(text, fraction, remSeconds){
 // re-translated when the language changes.
 let hintKey = "drawHint";
 function setHint(key, emphasis){
+    const changed = hintKey !== key || drawHint.textContent !== tr(key);
     hintKey = key;
     drawHint.textContent = tr(key);
-    drawHint.style.opacity = emphasis >= 0.8 ? 1 : 0.8;
+    drawHint.style.opacity = emphasis >= 0.8 ? 1 : 0.85;
+    if(changed) restartAnim(drawHint, "swap");
+}
+
+// ── Motion helpers ──────────────────────────────────────────────────────────
+// Re-triggers a one-shot CSS animation class on an element.
+function restartAnim(el, cls){
+    el.classList.remove(cls); void el.offsetWidth; el.classList.add(cls);
+}
+// Animates a number in an element from its current value to `to`.
+function countUp(el, to, dur = 600, suffix = ''){
+    const from = parseInt(el.textContent, 10) || 0;
+    if(reduceMotion || from === to){ el.textContent = to + suffix; return; }
+    const t0 = performance.now();
+    cancelAnimationFrame(el._countRaf);
+    const step = now => {
+        const t = Math.min(1, (now - t0) / dur);
+        el.textContent = Math.round(from + (to - from) * easeOut(t)) + suffix;
+        if(t < 1) el._countRaf = requestAnimationFrame(step);
+    };
+    el._countRaf = requestAnimationFrame(step);
+}
+// Sets a stat number, bumping it when it goes up.
+function setStatNum(el, value){
+    const prev = parseInt(el.textContent, 10);
+    if(prev === value) return;
+    if(!isNaN(prev) && value > prev){ countUp(el, value, 450); restartAnim(el, "bump"); }
+    else el.textContent = value;
+}
+// Small notification pill under the timer.
+const toastEl = document.getElementById("toast");
+let toastTimer = 0;
+function toast(text, icon = "i-spark"){
+    document.getElementById("toast-text").textContent = text;
+    setIcon(toastEl, icon);
+    toastEl.classList.remove("show"); void toastEl.offsetWidth; toastEl.classList.add("show");
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => toastEl.classList.remove("show"), 2400);
 }
 timerDisplay.addEventListener("keydown", e => {
     if(e.key === "Enter" || e.key === " "){ e.preventDefault(); timerDisplay.click(); }
@@ -1474,9 +1525,14 @@ const VP_AXIS_COLOR = { x: '#22c55e', y: '#a855f7', z: '#ef4444' };
 // along that axis; `lineSources` maps axis -> list of proj-vertex pairs whose
 // edge direction is that axis, so the guide line passes exactly through real
 // geometry instead of floating arbitrarily.
-function drawPerspectiveGuides(c, edgeSourcesByAxis) {
+let vpShownAt = 0;
+function drawPerspectiveGuides(c, edgeSourcesByAxis, k = 1) {
     const vps = getVanishingPoints(c);
     if (!vps.length) return;
+    // Guides fade in after the shape has (mostly) drawn itself, and when the
+    // switch is turned on.
+    const fade = Math.min(Math.max(0, (k - 0.5) / 0.5), animProgress(vpShownAt, 450));
+    if (fade <= 0) return;
 
     ctx.save();
     for (const vp of vps) {
@@ -1484,8 +1540,8 @@ function drawPerspectiveGuides(c, edgeSourcesByAxis) {
         const sources = edgeSourcesByAxis[vp.axis] || [];
 
         // Construction lines: extend each real edge of the shape out to the VP.
-        ctx.globalAlpha = 0.55;
-        ctx.lineWidth = 1.2;
+        ctx.globalAlpha = 0.5 * fade;
+        ctx.lineWidth = 1.1;
         ctx.setLineDash([5, 5]);
         ctx.strokeStyle = col;
         for (const [a, b] of sources) {
@@ -1504,13 +1560,13 @@ function drawPerspectiveGuides(c, edgeSourcesByAxis) {
 
         // Vanishing point marker.
         ctx.setLineDash([]);
-        ctx.globalAlpha = 0.95;
+        ctx.globalAlpha = 0.95 * fade;
         ctx.beginPath();
-        ctx.arc(vp.x, vp.y, 5, 0, Math.PI * 2);
+        ctx.arc(vp.x, vp.y, 3 + 2 * fade, 0, Math.PI * 2);
         ctx.fillStyle = col;
         ctx.fill();
         ctx.lineWidth = 1.5;
-        ctx.strokeStyle = getComputedStyle(document.body).getPropertyValue('--bg').trim();
+        ctx.strokeStyle = bgColor();
         ctx.stroke();
     }
     ctx.restore();
@@ -1692,6 +1748,7 @@ function generate() {
     if(timerEnabled && !isPaused) nextTime = Date.now() + timerDuration;
     practiceShownAt = Date.now();
     pushPoseHistory();
+    shapeBorn = performance.now();
     playSound('generate');
 }
 
@@ -1720,16 +1777,98 @@ function gotoPoseHistory(delta){
     poseHistoryIndex = newIdx;
     cubeData = poseHistory[poseHistoryIndex].map(c => ({...c}));
     practiceShownAt = Date.now();
+    shapeBorn = performance.now();
+    playSound('toggle');
     if(timerEnabled && !isPaused) nextTime = Date.now() + timerDuration;
     updatePoseNavButtons();
 }
 document.getElementById("act-prev").onclick = () => gotoPoseHistory(-1);
 document.getElementById("act-next").onclick = () => gotoPoseHistory(1);
 
-function drawCubeWire(proj, color, alpha, occlude) {
+// ── Draw-in animation ───────────────────────────────────────────────────────
+// Every new shape "draws itself" over ~0.7s: each segment grows from its
+// start point, staggered by its index, so the figure appears to be sketched
+// rather than popping in. `born` is a performance.now() timestamp.
+const easeOut = t => 1 - Math.pow(1 - t, 3);
+let shapeBorn = 0, revealBorn = 0;
+function animProgress(born, dur = 700){
+    if(reduceMotion) return 1;
+    return easeOut(Math.min(1, Math.max(0, (performance.now() - born) / dur)));
+}
+// Local progress of segment i of n for overall progress k.
+function segProgress(k, i, n){
+    if(k >= 1) return 1;
+    const start = n > 1 ? (i / (n - 1)) * 0.5 : 0;
+    return Math.min(1, Math.max(0, (k - start) / 0.5));
+}
+function strokeSeg(a, b, t){
+    if(t <= 0) return;
+    ctx.beginPath();
+    ctx.moveTo(a.x, a.y);
+    ctx.lineTo(a.x + (b.x - a.x) * t, a.y + (b.y - a.y) * t);
+    ctx.stroke();
+}
+const bgColor = () => getComputedStyle(document.body).getPropertyValue('--bg').trim();
+const HIDDEN_EDGE = () => document.body.classList.contains('light') ? 'rgba(26,25,24,0.28)' : 'rgba(237,237,240,0.22)';
+
+// ── Shape geometry split into visible / hidden screen segments ─────────────
+function cubeEdgeVisibility(proj){
+    const visible = faces.filter(f => isFaceVisible(f, proj));
+    return edges.map(([a, b]) => visible.some(f => f.includes(a) && f.includes(b)));
+}
+// Side silhouette lines of a cylinder, skipping them when the view is close
+// to straight down the axis (they'd degenerate into stubs). Thresholds are
+// in world-scale pixels (normalised by viewScale) so phones behave the same.
+function cylinderSilhouettes(cyl){
+    const { top, bottom, silhouetteIndices, maxHeight } = cyl;
+    const vs = Math.max(viewScale, 1e-3);
+    const heights = top.map((p, i) => Math.hypot(p.x - bottom[i].x, p.y - bottom[i].y));
+    const avgHeightN = heights.reduce((a, b) => a + b, 0) / heights.length / vs;
+    const xs = top.map(p => p.x), ys = top.map(p => p.y);
+    const w = Math.max(...xs) - Math.min(...xs), h = Math.max(...ys) - Math.min(...ys);
+    const ellipseRatio = w > 0 ? Math.min(w, h) / Math.max(w, h) : 0;
+    const nearTopView = maxHeight / vs < 28 || (ellipseRatio > 0.85 && avgHeightN < 55) || avgHeightN < 16;
+    if(nearTopView) return [];
+    const out = [];
+    for(const idx of silhouetteIndices){
+        const dx = top[idx].x - bottom[idx].x, dy = top[idx].y - bottom[idx].y;
+        if(Math.hypot(dx, dy) / vs < 15) continue;
+        const angle = Math.abs(Math.atan2(dy, dx) * 180 / Math.PI);
+        if(angle > 60 && angle < 120 && avgHeightN < 40) continue;
+        out.push([top[idx], bottom[idx]]);
+    }
+    return out;
+}
+// Returns { near: [...], far: [...], sides: [...], hidden: [...] } segment
+// lists. The near cap is fully visible, the far cap only where the wall
+// in front of it doesn't cover it.
+function cylinderParts(cyl){
+    const { top, bottom, wallVisible, topIsNear } = cyl;
+    const n = top.length;
+    const nearPts = topIsNear ? top : bottom, farPts = topIsNear ? bottom : top;
+    const near = [], far = [], hidden = [];
+    for(let i = 0; i < n; i++){
+        near.push([nearPts[i], nearPts[(i + 1) % n]]);
+        (wallVisible[i] ? far : hidden).push([farPts[i], farPts[(i + 1) % n]]);
+    }
+    return { near, far, sides: cylinderSilhouettes(cyl), hidden };
+}
+// All segments of a target shape, split by visibility (used for scoring).
+function shapeSegments(c){
+    if(c.type === 'cylinder'){
+        const p = cylinderParts(projectCylinder(c));
+        return { visible: [...p.near, ...p.far, ...p.sides], hidden: p.hidden };
+    }
+    const proj = projectCube(c), vis = cubeEdgeVisibility(proj);
+    const visible = [], hidden = [];
+    edges.forEach(([a, b], i) => (vis[i] ? visible : hidden).push([proj[a], proj[b]]));
+    return { visible, hidden };
+}
+
+function drawCubeWire(proj, color, alpha, occlude, k = 1) {
     const visible = faces.filter(f => isFaceVisible(f, proj));
     if(occlude){
-        ctx.globalAlpha = 1; ctx.fillStyle = getComputedStyle(document.body).getPropertyValue('--bg').trim();
+        ctx.globalAlpha = k; ctx.fillStyle = bgColor();
         for(const f of visible){
             ctx.beginPath(); ctx.moveTo(proj[f[0]].x, proj[f[0]].y);
             for(let i=1;i<f.length;i++) ctx.lineTo(proj[f[i]].x, proj[f[i]].y);
@@ -1737,12 +1876,17 @@ function drawCubeWire(proj, color, alpha, occlude) {
         }
     }
     ctx.globalAlpha = alpha !== undefined ? alpha : 1;
-    for(let [a,b] of edges){
-        const hidden = !visible.some(f => f.includes(a)&&f.includes(b));
-        ctx.beginPath(); ctx.lineWidth = hidden ? 2 : 3.5;
-        ctx.setLineDash(hidden ? [8,6] : []); ctx.strokeStyle = hidden ? "rgba(120,120,120,0.4)" : color;
-        ctx.moveTo(proj[a].x, proj[a].y); ctx.lineTo(proj[b].x, proj[b].y); ctx.stroke();
-    }
+    ctx.lineCap = "round";
+    const vis = cubeEdgeVisibility(proj);
+    // Hidden edges first so visible ones draw on top.
+    const order = edges.map((e, i) => i).sort((a, b) => vis[a] - vis[b]);
+    order.forEach((ei, oi) => {
+        const [a, b] = edges[ei], hidden = !vis[ei];
+        ctx.lineWidth = hidden ? 1.6 : 3;
+        ctx.setLineDash(hidden ? [6, 6] : []);
+        ctx.strokeStyle = hidden ? HIDDEN_EDGE() : color;
+        strokeSeg(proj[a], proj[b], segProgress(k, oi, order.length));
+    });
     ctx.setLineDash([]); ctx.globalAlpha = 1;
 }
 
@@ -1768,15 +1912,17 @@ function convexHull(points){
     return lower.concat(upper);
 }
 
-function drawCylinderWire(cyl, color, alpha = 1, occlude = false) {
-    const { top, bottom, wallVisible, topIsNear, silhouetteIndices, maxHeight } = cyl;
-    const n = top.length;
+// Draws a list of segments as one progressively-revealed stroke group.
+function strokeGroup(segs, k){
+    segs.forEach(([a, b], i) => strokeSeg(a, b, segProgress(k, i, segs.length)));
+}
 
+function drawCylinderWire(cyl, color, alpha = 1, occlude = false, k = 1) {
     if (occlude) {
-        const hull = convexHull(top.concat(bottom));
+        const hull = convexHull(cyl.top.concat(cyl.bottom));
         if (hull.length >= 3) {
-            ctx.globalAlpha = 1;
-            ctx.fillStyle = getComputedStyle(document.body).getPropertyValue('--bg').trim();
+            ctx.globalAlpha = k;
+            ctx.fillStyle = bgColor();
             ctx.beginPath();
             ctx.moveTo(hull[0].x, hull[0].y);
             for (let i = 1; i < hull.length; i++) ctx.lineTo(hull[i].x, hull[i].y);
@@ -1784,124 +1930,46 @@ function drawCylinderWire(cyl, color, alpha = 1, occlude = false) {
             ctx.fill();
         }
     }
-
+    const parts = cylinderParts(cyl);
     ctx.globalAlpha = alpha;
     ctx.lineCap = "round";
-
-    // === Рисуем эллипсы ===
-    function drawRim(pts, isNear) {
-        for (let i = 0; i < n; i++) {
-            const a = pts[i];
-            const b = pts[(i + 1) % n];
-
-            // Используем wallVisible вместо wallDotVS
-            const segmentVisible = isNear || wallVisible[i];
-            const hidden = !segmentVisible;
-
-            ctx.beginPath();
-            ctx.lineWidth = hidden ? 1.8 : 3.5;
-            ctx.setLineDash(hidden ? [6, 5] : []);
-            ctx.strokeStyle = hidden ? 'rgba(140,140,140,0.5)' : color;
-            ctx.moveTo(a.x, a.y);
-            ctx.lineTo(b.x, b.y);
-            ctx.stroke();
-        }
-        ctx.setLineDash([]);
-    }
-
-    drawRim(top, topIsNear);
-    drawRim(bottom, !topIsNear);
-
-    // === Вертикальные силуэтные линии ===
-    ctx.lineWidth = 3.5;
-    ctx.strokeStyle = color;
-    ctx.setLineDash([]);
-
-    const heights = top.map((p, i) => {
-        const dx = p.x - bottom[i].x;
-        const dy = p.y - bottom[i].y;
-        return Math.sqrt(dx*dx + dy*dy);
-    });
-
-    const avgHeight = heights.reduce((a, b) => a + b, 0) / heights.length;
-    const ellipseRatio = (() => {
-        const xs = top.map(p => p.x);
-        const ys = top.map(p => p.y);
-        const width = Math.max(...xs) - Math.min(...xs);
-        const heightEl = Math.max(...ys) - Math.min(...ys);
-        return width > 0 ? Math.min(width, heightEl) / Math.max(width, heightEl) : 0;
-    })();
-
-    // These thresholds decide whether the cylinder looks close enough to a
-    // top/bottom view that drawing its side silhouette lines would look wrong.
-    // They compare measurements that are in *screen pixels* (avgHeight,
-    // maxHeight, length below), but viewScale shrinks everything uniformly on
-    // small viewports (phones) — on a narrow screen viewScale can be ~0.4–0.6,
-    // so a perfectly normal 3/4 cylinder view ends up with a small pixel
-    // avgHeight and incorrectly trips the "near top-down" thresholds, hiding
-    // its side lines (the bug seen on mobile: only the two rim ellipses show,
-    // no connecting verticals). Normalizing by viewScale converts the
-    // comparison back into the original world-space scale these constants
-    // were tuned at, so the result is independent of viewport size.
-    const vs = Math.max(viewScale, 1e-3);
-    const avgHeightN = avgHeight / vs;
-    const maxHeightN = maxHeight / vs;
-
-    const isNearTopView = maxHeightN < 28 || 
-                         (ellipseRatio > 0.85 && avgHeightN < 55) || 
-                         avgHeightN < 16;
-
-    for (const idx of silhouetteIndices) {
-        const dx = top[idx].x - bottom[idx].x;
-        const dy = top[idx].y - bottom[idx].y;
-        const length = Math.sqrt(dx*dx + dy*dy);
-        const lengthN = length / vs;
-
-        if (lengthN < 15) continue;
-
-        if (isNearTopView) continue;
-
-        const angle = Math.abs(Math.atan2(dy, dx) * (180 / Math.PI));
-        if (angle > 60 && angle < 120 && avgHeightN < 40) continue;
-
-        ctx.beginPath();
-        ctx.moveTo(top[idx].x, top[idx].y);
-        ctx.lineTo(bottom[idx].x, bottom[idx].y);
-        ctx.stroke();
-    }
-
+    ctx.lineWidth = 1.6; ctx.setLineDash([6, 6]); ctx.strokeStyle = HIDDEN_EDGE();
+    strokeGroup(parts.hidden, k);
+    ctx.setLineDash([]); ctx.lineWidth = 3; ctx.strokeStyle = color;
+    strokeGroup(parts.near, k);
+    strokeGroup(parts.far, k);
+    strokeGroup(parts.sides, k);
     ctx.globalAlpha = 1;
 }
 
 // ── Ghost mode rendering ─────────────────────────────────────────────────
-// Sets the stroke style for one edge/segment and returns whether it should
-// be drawn at all (false = this edge is currently hidden entirely).
+// Only the edges a viewer can actually see are part of the task: hidden
+// (inner/back) edges are neither shown nor scored. A chosen number of the
+// largest visible faces is drawn solid as an anchor; the rest of the visible
+// outline is a dashed guide that can time out.
 function ghostEdgeStyle(isChecked, isAnchor, showGhostPart){
     if(isChecked){
-        ctx.setLineDash([]); ctx.strokeStyle = targetColor; ctx.globalAlpha = 0.85; ctx.lineWidth = 3;
+        ctx.setLineDash([]); ctx.strokeStyle = targetColor; ctx.globalAlpha = 0.9; ctx.lineWidth = 3;
         return true;
     }
     if(isAnchor){
-        ctx.setLineDash([]); ctx.strokeStyle = cubeColors[0]; ctx.globalAlpha = 0.9; ctx.lineWidth = 3;
+        ctx.setLineDash([]); ctx.strokeStyle = cubeColors[0]; ctx.globalAlpha = 0.95; ctx.lineWidth = 3;
         return true;
     }
     if(showGhostPart){
-        ctx.setLineDash([9, 7]); ctx.strokeStyle = cubeColors[0]; ctx.globalAlpha = 0.35; ctx.lineWidth = 2.5;
+        ctx.setLineDash([8, 8]); ctx.strokeStyle = cubeColors[0]; ctx.globalAlpha = 0.4; ctx.lineWidth = 2.2;
         return true;
     }
     return false;
 }
-// Anchor faces are taken from the faces the viewer can actually see, largest
-// first — a fixed "front face" could be edge-on and show up as a single line.
 function ghostAnchorEdgeSetFor(proj, n){
     const area = f => Math.abs(f.reduce((a, v, i) => {
         const p = proj[v], q = proj[f[(i + 1) % f.length]];
         return a + p.x * q.y - q.x * p.y;
     }, 0)) / 2;
-    const ranked = faces.map(f => ({ f, vis: isFaceVisible(f, proj), a: area(f) }))
-        .sort((x, y) => (y.vis - x.vis) || (y.a - x.a));
+    const ranked = faces.filter(f => isFaceVisible(f, proj)).sort((x, y) => area(y) - area(x));
     const set = new Set();
-    for(const { f } of ranked.slice(0, n)){
+    for(const f of ranked.slice(0, n)){
         for(let i = 0; i < f.length; i++){
             const a = f[i], b = f[(i + 1) % f.length];
             const idx = edges.findIndex(([p, q]) => (p === a && q === b) || (p === b && q === a));
@@ -1910,50 +1978,30 @@ function ghostAnchorEdgeSetFor(proj, n){
     }
     return set;
 }
-function renderGhostCube(c, showGhostPart, isChecked){
+function renderGhostCube(c, showGhostPart, isChecked, k){
     const proj = projectCube(c);
-    const anchorSet = ghostAllTransparent ? new Set() : ghostAnchorEdgeSetFor(proj, ghostAnchorFaces);
+    const vis = cubeEdgeVisibility(proj);
+    const anchorSet = ghostAnchorEdgeSetFor(proj, ghostAnchorFaces);
+    const shown = edges.map((e, i) => i).filter(i => vis[i]);
     ctx.save();
     ctx.lineCap = 'round'; ctx.lineJoin = 'round';
-    edges.forEach(([a, b], i) => {
-        if(!ghostEdgeStyle(isChecked, anchorSet.has(i), showGhostPart)) return;
-        ctx.beginPath();
-        ctx.moveTo(proj[a].x, proj[a].y);
-        ctx.lineTo(proj[b].x, proj[b].y);
-        ctx.stroke();
+    shown.forEach((ei, oi) => {
+        if(!ghostEdgeStyle(isChecked, anchorSet.has(ei), showGhostPart)) return;
+        const [a, b] = edges[ei];
+        strokeSeg(proj[a], proj[b], segProgress(k, oi, shown.length));
     });
     ctx.restore();
     ctx.setLineDash([]); ctx.globalAlpha = 1;
 }
-function renderGhostCylinder(c, showGhostPart, isChecked){
-    const cyl = projectCylinder(c);
-    const { top, bottom, silhouetteIndices } = cyl;
-    const n = top.length;
-    // No flat "faces" on a cylinder — approximate with two anchorable rims:
-    // the top rim becomes an anchor once ghostAnchorFaces >= 1, the bottom
-    // rim once >= 4 (roughly splitting the 0–6 slider range in half).
-    const anchorTop = !ghostAllTransparent && ghostAnchorFaces >= 1;
-    const anchorBottom = !ghostAllTransparent && ghostAnchorFaces >= 4;
+function renderGhostCylinder(c, showGhostPart, isChecked, k){
+    const parts = cylinderParts(projectCylinder(c));
+    // Anchor 1 = the near cap; anchor 2 = near cap + side lines.
+    const groups = [[parts.near, ghostAnchorFaces >= 1], [parts.sides, ghostAnchorFaces >= 2], [parts.far, false]];
     ctx.save();
     ctx.lineCap = 'round'; ctx.lineJoin = 'round';
-    function drawRim(pts, isAnchor){
-        if(!ghostEdgeStyle(isChecked, isAnchor, showGhostPart)) return;
-        ctx.beginPath();
-        ctx.moveTo(pts[0].x, pts[0].y);
-        for(let i = 1; i < n; i++) ctx.lineTo(pts[i].x, pts[i].y);
-        ctx.closePath();
-        ctx.stroke();
-    }
-    drawRim(top, anchorTop);
-    drawRim(bottom, anchorBottom);
-    for(const idx of silhouetteIndices){
-        const dx = top[idx].x - bottom[idx].x, dy = top[idx].y - bottom[idx].y;
-        if(dx*dx + dy*dy < 16) continue;
-        if(!ghostEdgeStyle(isChecked, false, showGhostPart)) continue;
-        ctx.beginPath();
-        ctx.moveTo(top[idx].x, top[idx].y);
-        ctx.lineTo(bottom[idx].x, bottom[idx].y);
-        ctx.stroke();
+    for(const [segs, isAnchor] of groups){
+        if(!ghostEdgeStyle(isChecked, isAnchor, showGhostPart)) continue;
+        strokeGroup(segs, k);
     }
     ctx.restore();
     ctx.setLineDash([]); ctx.globalAlpha = 1;
@@ -1961,8 +2009,9 @@ function renderGhostCylinder(c, showGhostPart, isChecked){
 function renderGhostShape(isChecked){
     if(!ghostTarget) return;
     const showGhostPart = isChecked ? false : (ghostAlwaysVisible || ghostShowingGhostPart);
-    if(ghostTarget.type === 'cylinder') renderGhostCylinder(ghostTarget, showGhostPart, isChecked);
-    else renderGhostCube(ghostTarget, showGhostPart, isChecked);
+    const k = animProgress(isChecked ? revealBorn : shapeBorn);
+    if(ghostTarget.type === 'cylinder') renderGhostCylinder(ghostTarget, showGhostPart, isChecked, k);
+    else renderGhostCube(ghostTarget, showGhostPart, isChecked, k);
 }
 
 // Overlay grid — a lightweight drawing aid to help judge proportions
@@ -1972,7 +2021,7 @@ function drawGrid(){
     if(gridMode === 'off') return;
     const w = W, h = H;
     ctx.save();
-    ctx.strokeStyle = getComputedStyle(document.body).getPropertyValue('--text-dim').trim();
+    ctx.strokeStyle = getComputedStyle(document.body).getPropertyValue('--text-2').trim();
     ctx.globalAlpha = 0.16;
     ctx.lineWidth = 1;
 
@@ -2019,15 +2068,16 @@ function draw() {
             return { shape: p, type:'cube', cubeRef: c, color: cubeColors[idx % cubeColors.length], z: p.reduce((s,v)=>s+v.z,0)/p.length };
         }).sort((a,b) => b.z - a.z);
 
+        const k = animProgress(shapeBorn, 650 + 120 * items.length);
         items.forEach((item, i) => {
-            if(item.type === 'cylinder') drawCylinderWire(item.shape, item.color, undefined, i > 0);
-            else drawCubeWire(item.shape, item.color, undefined, i > 0);
+            if(item.type === 'cylinder') drawCylinderWire(item.shape, item.color, undefined, i > 0, k);
+            else drawCubeWire(item.shape, item.color, undefined, i > 0, k);
         });
 
         if(showPerspective){
             items.forEach(item => {
-                if(item.type === 'cylinder') drawPerspectiveGuides(item.cubeRef, cylinderEdgeSourcesByAxis(item.shape));
-                else drawPerspectiveGuides(item.cubeRef, cubeEdgeSourcesByAxis(item.shape));
+                if(item.type === 'cylinder') drawPerspectiveGuides(item.cubeRef, cylinderEdgeSourcesByAxis(item.shape), k);
+                else drawPerspectiveGuides(item.cubeRef, cubeEdgeSourcesByAxis(item.shape), k);
             });
         }
 
@@ -2048,19 +2098,21 @@ function draw() {
             renderPreview: () => {
                 const isCyl = drawTarget.type === 'cylinder';
                 const shape = isCyl ? projectCylinder(drawTarget) : projectCube(drawTarget);
-                if(isCyl) drawCylinderWire(shape, cubeColors[0]);
-                else drawCubeWire(shape, cubeColors[0]);
+                const k = animProgress(shapeBorn);
+                if(isCyl) drawCylinderWire(shape, cubeColors[0], 1, false, k);
+                else drawCubeWire(shape, cubeColors[0], 1, false, k);
                 if(showPerspective){
-                    drawPerspectiveGuides(drawTarget, isCyl ? cylinderEdgeSourcesByAxis(shape) : cubeEdgeSourcesByAxis(shape));
+                    drawPerspectiveGuides(drawTarget, isCyl ? cylinderEdgeSourcesByAxis(shape) : cubeEdgeSourcesByAxis(shape), k);
                 }
             },
             renderChecked: () => {
                 const isCyl = drawTarget.type === 'cylinder';
                 const shape = isCyl ? projectCylinder(drawTarget) : projectCube(drawTarget);
-                if(isCyl) drawCylinderWire(shape, targetColor, 0.85);
-                else drawCubeWire(shape, targetColor, 0.85);
+                const k = animProgress(revealBorn);
+                if(isCyl) drawCylinderWire(shape, targetColor, 0.9, false, k);
+                else drawCubeWire(shape, targetColor, 0.9, false, k);
                 if(showPerspective){
-                    drawPerspectiveGuides(drawTarget, isCyl ? cylinderEdgeSourcesByAxis(shape) : cubeEdgeSourcesByAxis(shape));
+                    drawPerspectiveGuides(drawTarget, isCyl ? cylinderEdgeSourcesByAxis(shape) : cubeEdgeSourcesByAxis(shape), k);
                 }
             },
             regenerate: generateDrawTarget
@@ -2069,7 +2121,7 @@ function draw() {
         if (lineSubtype === 'ellipse') {
             drawMemoryStyleTarget({
                 hasTarget: !!ellipseTarget,
-                renderPreview: () => drawEllipseWire(ellipseTarget, cubeColors[0], 0.55, true),
+                renderPreview: () => drawEllipseWire(ellipseTarget, cubeColors[0], 0.55, true, animProgress(shapeBorn, 600)),
                 renderChecked: () => drawEllipseWire(ellipseTarget, targetColor, 0.85, false),
                 regenerate: generateEllipseTarget,
                 alwaysVisible: true
@@ -2077,7 +2129,7 @@ function draw() {
         } else {
             drawMemoryStyleTarget({
                 hasTarget: !!lineTarget,
-                renderPreview: () => drawLineWire(lineTarget.path, cubeColors[0], 0.55, true),
+                renderPreview: () => drawLineWire(lineTarget.path, cubeColors[0], 0.55, true, animProgress(shapeBorn, 600)),
                 renderChecked: () => drawLineWire(lineTarget.path, targetColor, 0.85, false),
                 regenerate: generateLineTarget,
                 alwaysVisible: true
@@ -2225,6 +2277,7 @@ function generateDrawTarget(){
     checked = false; userStrokes = []; undoneStrokes = []; redrawUserStrokes();
     showingPreview = true; previewEndTime = Date.now() + previewDuration;
     setHint("memorize", 0.8);
+    shapeBorn = performance.now();
     playSound('generate');
 }
 
@@ -2260,6 +2313,7 @@ function generateGhostTarget(){
     checked = false; userStrokes = []; undoneStrokes = []; redrawUserStrokes();
     ghostShowingGhostPart = true; ghostPreviewEndTime = Date.now() + ghostPreviewDuration;
     setHint("ghostHintVisible", 0.8);
+    shapeBorn = performance.now();
     playSound('generate');
 }
 
@@ -2284,7 +2338,7 @@ function drawGhostFrame(){
     if(showPerspective && ghostTarget){
         const isCyl = ghostTarget.type === 'cylinder';
         const shape = isCyl ? projectCylinder(ghostTarget) : projectCube(ghostTarget);
-        drawPerspectiveGuides(ghostTarget, isCyl ? cylinderEdgeSourcesByAxis(shape) : cubeEdgeSourcesByAxis(shape));
+        drawPerspectiveGuides(ghostTarget, isCyl ? cylinderEdgeSourcesByAxis(shape) : cubeEdgeSourcesByAxis(shape), animProgress(shapeBorn));
     }
 
     if(ghostAlwaysVisible){
@@ -2324,14 +2378,16 @@ function drawGhostFrame(){
 
 function computeGhostAccuracy(){
     if(!ghostTarget || userStrokes.length === 0) return 0;
-    return rasterCompareF1((tCtx, lw) => renderTargetToAltCtx(ghostTarget, tCtx, lw));
+    // Ghost: only the visible outline is the target; ink on hidden edges is off-target.
+    return rasterCompareF1((tCtx, lw) => renderTargetToAltCtx(ghostTarget, tCtx, lw, false));
 }
 
 function performGhostCheck(auto = false){
     if(checked || !ghostTarget) return;
     const empty = userStrokes.length === 0;
-    if(empty && !auto) return;
+    if(empty && !auto){ toast(tr('toastDrawFirst'), 'i-pen'); return; }
     checked = true;
+    revealBorn = performance.now();
     currentStroke = null;
     redrawUserStrokes();
     ghostAutoCheckDeadline = 0;
@@ -2340,7 +2396,7 @@ function performGhostCheck(auto = false){
     recordCubeDrawn('ghost', ghostTarget.type, 1);
     const pct = computeGhostAccuracy();
     recordAccuracy(pct);
-    playSound(pct >= 60 ? 'success' : 'fail');
+    playSound(pct >= 85 ? 'great' : pct >= 60 ? 'success' : 'fail');
     ghostNextTime = Date.now() + AUTO_NEXT_DELAY;
     requestAnimationFrame(() => { showAccuracy(pct); });
 }
@@ -2449,13 +2505,14 @@ function generateLineTarget(){
     showingPreview = false;
     autoCheckDeadline = 0;
     setHint("traceHint", 0.4);
+    shapeBorn = performance.now();
     playSound('generate');
 }
 
 // Draws the line reference path onto the main canvas (preview / post-check
 // overlay). `alpha` mirrors drawCubeWire/drawCylinderWire's optional dimming
 // for the post-check reference pass.
-function drawLineWire(path, color, alpha = 1, dashed = false) {
+function drawLineWire(path, color, alpha = 1, dashed = false, k = 1) {
     if (!path || path.length < 2) return;
     ctx.save();
     ctx.globalAlpha = alpha;
@@ -2464,18 +2521,23 @@ function drawLineWire(path, color, alpha = 1, dashed = false) {
     ctx.lineCap = 'round';
     ctx.lineJoin = 'round';
     if (dashed) ctx.setLineDash([10, 10]);
+    // Draw-in: reveal the path from its start up to fraction k.
+    const last = (path.length - 1) * k, n = Math.floor(last);
     ctx.beginPath();
     ctx.moveTo(path[0].x, path[0].y);
-    for (let i = 1; i < path.length; i++) ctx.lineTo(path[i].x, path[i].y);
+    for (let i = 1; i <= n; i++) ctx.lineTo(path[i].x, path[i].y);
+    if (n < path.length - 1) {
+        const a = path[n], b = path[n + 1], f = last - n;
+        ctx.lineTo(a.x + (b.x - a.x) * f, a.y + (b.y - a.y) * f);
+    }
     ctx.stroke();
     ctx.setLineDash([]);
-    // Small endpoint markers so the start/end of the path read clearly even
-    // for a near-closed or overlapping shape.
+    // Endpoint markers: start dot immediately, end dot pops in at the end.
     ctx.fillStyle = color;
-    for (const p of [path[0], path[path.length - 1]]) {
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, 4, 0, Math.PI * 2);
-        ctx.fill();
+    ctx.beginPath(); ctx.arc(path[0].x, path[0].y, 4, 0, Math.PI * 2); ctx.fill();
+    if (k >= 1) {
+        const p = path[path.length - 1];
+        ctx.beginPath(); ctx.arc(p.x, p.y, 4, 0, Math.PI * 2); ctx.fill();
     }
     ctx.restore();
 }
@@ -2527,6 +2589,7 @@ function generateEllipseTarget() {
     showingPreview = false;
     autoCheckDeadline = 0;
     setHint("traceEllipseHint", 0.4);
+    shapeBorn = performance.now();
     playSound('generate');
 }
 
@@ -2545,8 +2608,8 @@ function ellipseToPath(e, n = 120) {
     return pts;
 }
 
-function drawEllipseWire(e, color, alpha = 1, dashed = false) {
-    if (!e) return;
+function drawEllipseWire(e, color, alpha = 1, dashed = false, k = 1) {
+    if (!e || k <= 0) return;
     ctx.save();
     ctx.globalAlpha = alpha;
     ctx.strokeStyle = color;
@@ -2554,7 +2617,7 @@ function drawEllipseWire(e, color, alpha = 1, dashed = false) {
     ctx.lineCap = 'round';
     if (dashed) ctx.setLineDash([10, 10]);
     ctx.beginPath();
-    ctx.ellipse(e.cx, e.cy, e.rx, e.ry, e.angle, 0, Math.PI * 2);
+    ctx.ellipse(e.cx, e.cy, e.rx, e.ry, e.angle, 0, Math.PI * 2 * k);
     ctx.stroke();
     ctx.setLineDash([]);
     ctx.restore();
@@ -2700,67 +2763,30 @@ document.addEventListener("keydown", e => {
 // Renders the target shape onto any 2D context (used for accuracy comparison
 // without touching the main canvas). All lines drawn solid and thick so
 // freehand stroke width differences don't unfairly penalise the score.
-function renderTargetToAltCtx(c, tCtx, lw = 3.5) {
+// Renders a cube/cylinder target for scoring. Visible edges are always
+// drawn; hidden (back/inner) edges only when `withHidden` is set.
+function renderTargetToAltCtx(c, tCtx, lw, withHidden = false) {
+    const { visible, hidden } = shapeSegments(c);
     tCtx.save();
     tCtx.strokeStyle = '#ffffff';
     tCtx.lineWidth = lw;
     tCtx.lineCap = 'round';
     tCtx.lineJoin = 'round';
-    tCtx.setLineDash([]);
-
-    try {
-        if (c.type === 'cylinder') {
-            const cyl = projectCylinder(c);
-            const { top, bottom, wallVisible, topIsNear, silhouetteIndices } = cyl;
-            const n = top.length;
-
-            // Рисуем эллипсы полностью (для сравнения точности)
-            function drawFullRim(pts) {
-                if (pts.length < 3) return;
-                tCtx.beginPath();
-                tCtx.moveTo(pts[0].x, pts[0].y);
-                for (let i = 1; i < n; i++) {
-                    tCtx.lineTo(pts[i].x, pts[i].y);
-                }
-                tCtx.closePath();
-                tCtx.stroke();
-            }
-
-            drawFullRim(top);
-            drawFullRim(bottom);
-
-            // Вертикальные линии
-            for (const idx of silhouetteIndices) {
-                const dx = top[idx].x - bottom[idx].x;
-                const dy = top[idx].y - bottom[idx].y;
-                if (dx*dx + dy*dy < 16) continue;
-
-                tCtx.beginPath();
-                tCtx.moveTo(top[idx].x, top[idx].y);
-                tCtx.lineTo(bottom[idx].x, bottom[idx].y);
-                tCtx.stroke();
-            }
-        } 
-        else if (c.type === 'cube') {
-            // Куб — оставляем как было
-            const proj = projectCube(c);
-            for (const [a, b] of edges) {
-                tCtx.beginPath();
-                tCtx.moveTo(proj[a].x, proj[a].y);
-                tCtx.lineTo(proj[b].x, proj[b].y);
-                tCtx.stroke();
-            }
-        }
-    } catch (e) {
-        console.error("Error in renderTargetToAltCtx:", e);
+    tCtx.beginPath();
+    for (const [a, b] of withHidden ? visible.concat(hidden) : visible) {
+        tCtx.moveTo(a.x, a.y);
+        tCtx.lineTo(b.x, b.y);
     }
-
+    tCtx.stroke();
     tCtx.restore();
 }
 
+// Memory test: the visible outline is what's required. Drawing the hidden
+// construction edges too ("drawing through") is allowed — that ink counts
+// as on-target — but leaving them out costs nothing.
 function computeAccuracy() {
     if(!drawTarget || userStrokes.length === 0) return 0;
-    return rasterCompareF1((tCtx, lw) => renderTargetToAltCtx(drawTarget, tCtx, lw));
+    return rasterCompareF1((tCtx, lw, isBand) => renderTargetToAltCtx(drawTarget, tCtx, lw, isBand));
 }
 
 // Same target/scoring scheme as computeAccuracy, but for the line-training
@@ -2811,7 +2837,7 @@ function rasterCompareF1(renderTargetFn) {
             c.stroke();
         }
     };
-    const tThin = layer(c => renderTargetFn(c, ACC_THIN)), tBand = layer(c => renderTargetFn(c, ACC_BAND));
+    const tThin = layer(c => renderTargetFn(c, ACC_THIN, false)), tBand = layer(c => renderTargetFn(c, ACC_BAND, true));
     const uThin = layer(userInk(ACC_THIN)), uBand = layer(userInk(ACC_BAND));
 
     let nT = 0, nU = 0, covered = 0, onTarget = 0;
@@ -2831,8 +2857,8 @@ const accRingFg = document.getElementById('acc-ring-fg');
 accRingFg.style.strokeDasharray = ACC_RING_CIRC;
 function showAccuracy(pct) {
     const idx = pct >= 90 ? 5 : pct >= 75 ? 4 : pct >= 60 ? 3 : pct >= 45 ? 2 : pct >= 25 ? 1 : 0;
-    const colors = ['#ef4444', '#f97316', '#eab308', '#22c55e', '#10b981', '#a855f7'];
-    document.getElementById('accuracy-pct').textContent = pct + '%';
+    const colors = ['#ff4d5e', '#ff8a3d', '#ffb020', '#9bd85c', '#3ddc97', '#3ddc97'];
+    countUp(document.getElementById('accuracy-pct'), pct, 900, '%');
     const grade = document.getElementById('accuracy-grade');
     grade.textContent = tr('accGrades')[idx];
     grade.style.color = colors[idx];
@@ -2855,8 +2881,9 @@ function hideAccuracy() { accuracyBadge.classList.add('hidden'); }
 function performCheck(auto = false){
     if(showingPreview || checked) return;
     const empty = userStrokes.length === 0;
-    if(empty && !auto) return;
+    if(empty && !auto){ if(appMode === 'draw') toast(tr('toastDrawFirst'), 'i-pen'); return; }
     checked = true;
+    revealBorn = performance.now();
     autoCheckDeadline = 0;
     if(currentStroke) currentStroke = null;
     redrawUserStrokes();
@@ -2871,7 +2898,7 @@ function performCheck(auto = false){
         ? (lineSubtype === 'ellipse' ? computeEllipseAccuracy() : computeLineAccuracy())
         : computeAccuracy();
     recordAccuracy(pct);
-    playSound(pct >= 60 ? 'success' : 'fail');
+    playSound(pct >= 85 ? 'great' : pct >= 60 ? 'success' : 'fail');
     if(appMode === 'lines'){
         // Lines mode checks every stroke at a fast pace — no blocking popup;
         // the score goes into the stats and the next target appears at once.
@@ -2887,6 +2914,29 @@ function performCheck(auto = false){
 // ── Controls & settings ─────────────────────────────────────────────────────
 const $ = id => document.getElementById(id);
 
+// ── Sliding thumb for segmented controls (and the mode tabs) ──────────────
+// One absolutely-positioned pill per group glides to the active button.
+// A ResizeObserver re-measures when a group is shown, resized or re-labelled.
+function moveThumb(group, instant = false){
+    const thumb = group._thumb;
+    if(!thumb) return;
+    const active = group.querySelector(":scope > button.active");
+    if(!active || !group.offsetWidth){ thumb.style.opacity = 0; return; }
+    if(instant) group.classList.add("no-anim");
+    thumb.style.opacity = 1;
+    thumb.style.width = active.offsetWidth + "px";
+    thumb.style.height = active.offsetHeight + "px";
+    thumb.style.transform = `translate(${active.offsetLeft}px, ${active.offsetTop}px)`;
+    if(instant){ void thumb.offsetWidth; group.classList.remove("no-anim"); }
+}
+const thumbObserver = new ResizeObserver(entries => entries.forEach(e => moveThumb(e.target, true)));
+for(const g of document.querySelectorAll(".seg")){
+    const t = document.createElement("span");
+    t.className = "seg-thumb";
+    g.prepend(t); g._thumb = t;
+    thumbObserver.observe(g);
+}
+
 // Marks the button whose data-<key> matches `value` as active in a group.
 function setActive(groupId, key, value){
     for(const btn of $(groupId).querySelectorAll("button")){
@@ -2894,11 +2944,14 @@ function setActive(groupId, key, value){
         const match = (v === String(value)) || (v !== undefined && !isNaN(v) && !isNaN(value) && +v === +value);
         btn.classList.toggle("active", match);
     }
+    moveThumb($(groupId));
 }
 function bindSegmented(groupId, callback){
     for(const b of $(groupId).querySelectorAll("button")){
         b.addEventListener("click", () => {
+            if(b.classList.contains("active")) return;
             for(const x of $(groupId).querySelectorAll("button")) x.classList.toggle("active", x === b);
+            moveThumb($(groupId));
             callback(b);
             savePrefs();
         });
@@ -2906,7 +2959,30 @@ function bindSegmented(groupId, callback){
 }
 function setSwitch(id, on){ $(id).setAttribute("aria-checked", on ? "true" : "false"); }
 function bindSwitch(id, getter, setter){
-    $(id).addEventListener("click", () => { setter(!getter()); savePrefs(); });
+    $(id).addEventListener("click", () => { setter(!getter()); savePrefs(); playSound('toggle'); });
+}
+// Height-animated show/hide for .collapse wrappers.
+function setCollapsed(id, closed){ $(id).classList.toggle("closed", closed); }
+
+// Animates the floating action bar's width when its set of buttons changes,
+// and pops newly-shown buttons in.
+const actionBar = $("action-bar");
+function morphActionBar(mutate){
+    const before = new Set([...actionBar.children].filter(c => !c.classList.contains("hidden")));
+    const w0 = actionBar.offsetWidth;
+    mutate();
+    if(reduceMotion || !w0) return;
+    actionBar.style.width = "";
+    const w1 = actionBar.offsetWidth;
+    for(const c of actionBar.children){
+        if(!c.classList.contains("hidden") && !before.has(c)) restartAnim(c, "enter");
+    }
+    if(w0 === w1) return;
+    actionBar.style.width = w0 + "px";
+    void actionBar.offsetWidth;
+    actionBar.style.width = w1 + "px";
+    clearTimeout(actionBar._t);
+    actionBar._t = setTimeout(() => { actionBar.style.width = ""; }, 500);
 }
 
 function regenerateCurrent(){
@@ -2923,7 +2999,7 @@ function savePrefs(){
         timerSec: timerDuration / 1000, showPerspective, gridMode, freeRotation,
         previewSec: previewDuration / 1000, autoCheckEnabled, autoCheckSec: autoCheckDuration / 1000,
         lineSubtype, lineComplexity, lineBends, lineSharpness, lineRotation, lineSize, ellipseRatioMode,
-        ghostAnchorFaces, ghostAllTransparent, ghostAlwaysVisible, ghostPreviewSec: ghostPreviewDuration / 1000,
+        ghostAnchorFaces, ghostAlwaysVisible, ghostPreviewSec: ghostPreviewDuration / 1000,
         ghostAutoCheckEnabled, ghostAutoCheckSec: ghostAutoCheckDuration / 1000
     }));
 }
@@ -2953,8 +3029,7 @@ function loadPrefs(){
     lineRotation = pick(p.lineRotation, [0,1,2], 0);
     lineSize = pick(p.lineSize, [0.45,0.6,0.75,0.9,1], 0.75);
     ellipseRatioMode = pick(p.ellipseRatioMode, ['random','circle','wide','narrow'], 'random');
-    ghostAnchorFaces = pick(p.ghostAnchorFaces, [0,1,2,3,4,5,6], 1);
-    ghostAllTransparent = bool(p.ghostAllTransparent, false);
+    ghostAnchorFaces = p.ghostAllTransparent ? 0 : Math.min(2, pick(p.ghostAnchorFaces, [0,1,2,3,4,5,6], 1));
     ghostAlwaysVisible = bool(p.ghostAlwaysVisible, false);
     ghostPreviewDuration = pick(p.ghostPreviewSec, [2,4,8], 4) * 1000;
     ghostAutoCheckEnabled = bool(p.ghostAutoCheckEnabled, false);
@@ -2967,6 +3042,7 @@ function syncControls(){
     setActive("cubes-buttons", "cubes", numCubes);
     setActive("persp-buttons", "persp", samePerspective ? "same" : "diff");
     setActive("grid-buttons", "grid", gridMode);
+    document.body.classList.toggle("grid-on", gridMode !== 'off');
     setActive("preview-buttons", "sec", previewDuration / 1000);
     setActive("autocheck-duration-buttons", "sec", autoCheckDuration / 1000);
     setActive("line-subtype-buttons", "subtype", lineSubtype);
@@ -2978,15 +3054,14 @@ function syncControls(){
     setActive("ellipse-ratio-buttons", "eratio", ellipseRatioMode);
     setActive("ghost-preview-buttons", "sec", ghostAlwaysVisible ? "always" : ghostPreviewDuration / 1000);
     setActive("ghost-autocheck-duration-buttons", "sec", ghostAutoCheckDuration / 1000);
-    $("line-only-settings").classList.toggle("hidden", lineSubtype === 'ellipse');
-    $("ellipse-only-settings").classList.toggle("hidden", lineSubtype !== 'ellipse');
-    ghostAnchorSlider.value = ghostAnchorFaces; ghostAnchorVal.textContent = ghostAnchorFaces;
+    setActive("ghost-anchor-buttons", "anchor", ghostAnchorFaces);
+    setCollapsed("line-only-settings", lineSubtype === 'ellipse');
+    setCollapsed("ellipse-only-settings", lineSubtype !== 'ellipse');
     setTimerDurationSec(timerDuration / 1000);
     setTimerEnabled(timerEnabled);
     setFreeRotation(freeRotation);
     setShowPerspective(showPerspective);
     setAutoCheck(autoCheckEnabled);
-    setGhostAllTransparent(ghostAllTransparent);
     setGhostAutoCheck(ghostAutoCheckEnabled);
 }
 
@@ -2994,7 +3069,10 @@ function syncControls(){
 bindSegmented("shape-buttons", b => { shapeType = b.dataset.shape; regenerateCurrent(); });
 bindSegmented("mode-buttons", b => { mode = +b.dataset.mode; regenerateCurrent(); });
 
-function setShowPerspective(val){ showPerspective = val; setSwitch("toggle-vp", val); }
+function setShowPerspective(val){
+    if(val && !showPerspective) vpShownAt = performance.now();
+    showPerspective = val; setSwitch("toggle-vp", val);
+}
 bindSwitch("toggle-vp", () => showPerspective, setShowPerspective);
 
 // ── Mode switching ──────────────────────────────────────────────────────────
@@ -3004,10 +3082,14 @@ function switchAppMode(m){
     appMode = m;
     showingPreview = false; checked = false; currentStroke = null;
     userStrokes = []; undoneStrokes = []; redrawUserStrokes();
-    for(const el of document.querySelectorAll("[data-modes]")){
-        el.classList.toggle("hidden", !el.dataset.modes.split(" ").includes(m));
-    }
+    morphActionBar(() => {
+        for(const el of document.querySelectorAll("[data-modes]")){
+            el.classList.toggle("hidden", !el.dataset.modes.split(" ").includes(m));
+        }
+    });
     $("mode-desc").textContent = tr(MODE_DESC[m]);
+    restartAnim($("mode-desc"), "swap");
+    $("ui").querySelector(".panel-body").scrollTop = 0;
     const drawing = m !== 'practice';
     drawCanvas.classList.toggle("hidden", !drawing);
     drawHint.classList.toggle("hidden", !drawing);
@@ -3015,13 +3097,14 @@ function switchAppMode(m){
     timerDisplay.classList.remove("urgent");
     if(m !== 'practice'){ isPaused = false; timerDisplay.classList.remove("paused"); }
     hideAccuracy();
-    for(const btn of document.querySelectorAll("#tabs button, #bottom-nav button")){
+    for(const btn of document.querySelectorAll("#tabs > button, #bottom-nav > button")){
         btn.classList.toggle("active", btn.dataset.appMode === m);
     }
+    moveThumb($("tabs")); moveThumb($("bottom-nav"));
     regenerateCurrent();
     savePrefs();
 }
-for(const b of document.querySelectorAll("#tabs button, #bottom-nav button")){
+for(const b of document.querySelectorAll("#tabs > button, #bottom-nav > button")){
     b.addEventListener("click", () => { if(b.dataset.appMode !== appMode) switchAppMode(b.dataset.appMode); });
 }
 
@@ -3035,6 +3118,7 @@ function setTimerDurationSec(sec){
     sec = Math.max(1, Math.min(3600, Math.round(sec) || 1));
     timerDuration = sec * 1000;
     durationSlider.value = Math.min(sec, +durationSlider.max);
+    durationSlider.style.setProperty("--p", ((durationSlider.value - durationSlider.min) / (durationSlider.max - durationSlider.min) * 100) + "%");
     if(document.activeElement !== durationInput) durationInput.value = sec;
     if(timerEnabled && !isPaused) nextTime = Date.now() + timerDuration;
 }
@@ -3046,7 +3130,7 @@ durationInput.addEventListener("keydown", e => { if(e.key === "Enter") durationI
 function setTimerEnabled(val){
     timerEnabled = val;
     setSwitch("toggle-timer", val);
-    $("duration-field").classList.toggle("hidden", !val);
+    setCollapsed("duration-field", !val);
     if(val){ isPaused = false; timerDisplay.classList.remove("paused"); nextTime = Date.now() + timerDuration; }
 }
 bindSwitch("toggle-timer", () => timerEnabled, setTimerEnabled);
@@ -3073,7 +3157,7 @@ bindSegmented("preview-buttons", b => { previewDuration = +b.dataset.sec * 1000;
 function setAutoCheck(val){
     autoCheckEnabled = val;
     setSwitch("toggle-autocheck", val);
-    $("autocheck-duration-wrap").classList.toggle("hidden", !val);
+    setCollapsed("autocheck-duration-wrap", !val);
     if(val && appMode === 'draw' && drawTarget && !showingPreview && !checked){
         autoCheckDeadline = Date.now() + autoCheckDuration;
     } else if(!val){
@@ -3087,20 +3171,7 @@ bindSegmented("autocheck-duration-buttons", b => {
 });
 
 // ── Ghost ───────────────────────────────────────────────────────────────────
-const ghostAnchorSlider = $("ghost-anchor-slider");
-const ghostAnchorVal = $("ghost-anchor-val");
-ghostAnchorSlider.addEventListener("input", () => {
-    ghostAnchorFaces = +ghostAnchorSlider.value;
-    ghostAnchorVal.textContent = ghostAnchorFaces;
-    savePrefs();
-});
-function setGhostAllTransparent(val){
-    ghostAllTransparent = val;
-    setSwitch("toggle-ghost-transparent", val);
-    ghostAnchorSlider.disabled = val;
-    ghostAnchorSlider.closest(".field").style.opacity = val ? 0.45 : 1;
-}
-bindSwitch("toggle-ghost-transparent", () => ghostAllTransparent, setGhostAllTransparent);
+bindSegmented("ghost-anchor-buttons", b => { ghostAnchorFaces = +b.dataset.anchor; });
 bindSegmented("ghost-preview-buttons", b => {
     ghostAlwaysVisible = b.dataset.sec === 'always';
     if(!ghostAlwaysVisible){
@@ -3111,7 +3182,7 @@ bindSegmented("ghost-preview-buttons", b => {
 function setGhostAutoCheck(val){
     ghostAutoCheckEnabled = val;
     setSwitch("toggle-ghost-autocheck", val);
-    $("ghost-autocheck-duration-wrap").classList.toggle("hidden", !val);
+    setCollapsed("ghost-autocheck-duration-wrap", !val);
     if(val && ghostTarget && !ghostShowingGhostPart && !checked && !ghostAlwaysVisible){
         ghostAutoCheckDeadline = Date.now() + ghostAutoCheckDuration;
     } else if(!val){
@@ -3144,12 +3215,18 @@ bindSegmented("line-size-buttons", b => { lineSize = +b.dataset.size; regenLines
 bindSegmented("ellipse-ratio-buttons", b => { ellipseRatioMode = b.dataset.eratio; regenLines(); });
 bindSegmented("line-subtype-buttons", b => {
     lineSubtype = b.dataset.subtype;
-    $("line-only-settings").classList.toggle("hidden", lineSubtype === 'ellipse');
-    $("ellipse-only-settings").classList.toggle("hidden", lineSubtype !== 'ellipse');
+    setCollapsed("line-only-settings", lineSubtype === 'ellipse');
+    setCollapsed("ellipse-only-settings", lineSubtype !== 'ellipse');
     regenLines();
 });
 
-bindSegmented("grid-buttons", b => { gridMode = b.dataset.grid; });
+bindSegmented("grid-buttons", b => { gridMode = b.dataset.grid; document.body.classList.toggle("grid-on", gridMode !== 'off'); });
+$("appearance-toggle").onclick = () => {
+    const btn = $("appearance-toggle"), open = btn.getAttribute("aria-expanded") !== "true";
+    btn.setAttribute("aria-expanded", open);
+    setCollapsed("appearance-body", !open);
+    if(open) setTimeout(() => btn.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth", block: "start" }), 120);
+};
 
 // ── Action bar ──────────────────────────────────────────────────────────────
 function checkCurrent(){
@@ -3168,7 +3245,10 @@ fsBtn.onclick = () => {
 };
 document.addEventListener("fullscreenchange", () => setIcon(fsBtn, document.fullscreenElement ? "i-min" : "i-max"));
 
-const DEFAULT_COLORS = { accent: "#6366f1", target: "#f43f5e", c1Dark: "#f4f4f5", c1Light: "#18181b", c2: "#38bdf8", c3: "#f59e0b" };
+const DEFAULT_COLORS = { accent: "#ff5c39", target: "#3ddc97", c1Dark: "#ededf0", c1Light: "#1a1918", c2: "#4cb8ff", c3: "#ffb020" };
+// Defaults of earlier versions — saved values equal to these are treated as
+// "never customised" and follow the current defaults instead.
+const LEGACY_DEFAULTS = { accent: ["#6366f1", "#3b82f6"], target: ["#f43f5e"], c2: ["#38bdf8"], c3: ["#f59e0b"] };
 const isLight = () => document.body.classList.contains("light");
 function applyTheme(light){
     document.body.classList.toggle("light", light);
@@ -3176,7 +3256,7 @@ function applyTheme(light){
     // Keep object 1 readable: if it's still a default ink colour (white on
     // dark / near-black on light), swap it to match the new background.
     const c1 = $("color-cube1");
-    const darkInks = [DEFAULT_COLORS.c1Dark, "#ffffff"], lightInks = [DEFAULT_COLORS.c1Light, "#0f172a"];
+    const darkInks = [DEFAULT_COLORS.c1Dark, "#ffffff", "#f4f4f5"], lightInks = [DEFAULT_COLORS.c1Light, "#0f172a", "#18181b"];
     if(light && darkInks.includes(c1.value.toLowerCase())) c1.value = DEFAULT_COLORS.c1Light;
     if(!light && lightInks.includes(c1.value.toLowerCase())) c1.value = DEFAULT_COLORS.c1Dark;
     applyColors();
@@ -3193,12 +3273,22 @@ $("lang-toggle").onclick = () => {
     updateLanguage();
 };
 
-function openOverlay(id){ $(id).classList.add("open"); const c = $(id).querySelector("[data-close]"); if(c) c.focus(); }
-function closeOverlays(){ document.querySelectorAll(".overlay.open").forEach(o => o.classList.remove("open")); }
+function openOverlay(id){
+    const o = $(id);
+    o.classList.remove("closing"); o.classList.add("open");
+    playSound('open');
+    const c = o.querySelector("[data-close]"); if(c) c.focus({ preventScroll: true });
+}
+function closeOverlay(o){
+    if(!o.classList.contains("open") || o.classList.contains("closing")) return;
+    o.classList.add("closing");
+    setTimeout(() => o.classList.remove("open", "closing"), reduceMotion ? 0 : 220);
+}
+function closeOverlays(){ document.querySelectorAll(".overlay.open").forEach(closeOverlay); }
 const anyOverlayOpen = () => !!document.querySelector(".overlay.open");
 $("toggle-help").onclick = () => openOverlay("help-overlay");
 for(const o of document.querySelectorAll(".overlay")){
-    o.addEventListener("click", e => { if(e.target === o || e.target.closest("[data-close]")) o.classList.remove("open"); });
+    o.addEventListener("click", e => { if(e.target === o || e.target.closest("[data-close]")) closeOverlay(o); });
 }
 document.addEventListener("keydown", e => {
     if(e.key !== "Escape") return;
@@ -3233,6 +3323,9 @@ function loadColors(){
         try { const o = JSON.parse(store.get("pbt_c")); if(o) c = { c1: o.acc, c2: o.c2, c3: o.c3, target: o.tgt }; } catch(_) {}
     }
     if(!c) return;
+    for(const [key, olds] of Object.entries(LEGACY_DEFAULTS)){
+        if(typeof c[key] === 'string' && olds.includes(c[key].toLowerCase())) delete c[key];
+    }
     if(valid(c.accent)) $("color-accent").value = c.accent;
     if(valid(c.c1)) $("color-cube1").value = c.c1;
     if(valid(c.c2)) $("color-cube2").value = c.c2;
@@ -3272,7 +3365,8 @@ function recordAccuracy(pct){
 }
 
 function recordCubeDrawn(category = 'practice', subtype = 'cube', qty = 1){
-    boxCount += qty; $("count").textContent = boxCount;
+    boxCount += qty; setStatNum($("count"), boxCount);
+    const levelBefore = Math.floor(stats.total / 100) + 1;
     const k = tKey(), isFirst = !stats.d[k];
     stats.d[k] = (stats.d[k]||0)+qty; stats.total += qty;
 
@@ -3289,17 +3383,17 @@ function recordCubeDrawn(category = 'practice', subtype = 'cube', qty = 1){
     if(isFirst){
         stats.streak = (stats.last && dayDiff(stats.last, k) === 1) ? stats.streak + 1 : 1;
         stats.last = k;
+        if(stats.streak > 1) toast(tr('toastStreak').replace('{n}', stats.streak), 'i-flame');
     }
     store.set("pbt_s", JSON.stringify(stats)); renderStats();
+    const levelAfter = Math.floor(stats.total / 100) + 1;
+    if(levelAfter > levelBefore){
+        toast(tr('toastLevel').replace('{n}', levelAfter), 'i-award');
+        setTimeout(() => playSound('levelup'), 350);
+    }
 }
 
-// Level system: every 100 shapes drawn = 1 level. Medal tier scales with level.
-function getMedal(level){
-    if(level >= 10) return "🏆";
-    if(level >= 6) return "🥇";
-    if(level >= 3) return "🥈";
-    return "🥉";
-}
+// Level system: every 100 shapes drawn = 1 level.
 function getFlameTier(streak){
     if(streak >= 30) return 4;
     if(streak >= 14) return 3;
@@ -3310,25 +3404,23 @@ function getFlameTier(streak){
 
 function renderStats(){
     const streak = currentStreak();
-    $("stat-today").textContent = stats.d[tKey()] || 0;
-    $("stat-total").textContent = stats.total;
-    $("stat-streak").textContent = streak;
+    setStatNum($("stat-today"), stats.d[tKey()] || 0);
+    setStatNum($("stat-total"), stats.total);
+    setStatNum($("stat-streak"), streak);
 
-    const flameEl = $("flame-icon");
-    flameEl.className = "stat-emoji flame-icon";
     const tier = getFlameTier(streak);
-    if(tier > 0) flameEl.classList.add(`tier-${tier}`);
+    $("flame-icon").classList.toggle("lit", tier > 0);
+    $("flame-icon").classList.toggle("hot", tier >= 3);
     $("streak-badge").title = lang === 'ru' ? `${streak} ${pluralize(streak, 'день', 'дня', 'дней')} подряд` : `${streak}-day streak`;
 
     const level = Math.floor(stats.total / 100) + 1;
     const progress = stats.total % 100;
-    $("stat-level").textContent = level;
+    setStatNum($("stat-level"), level);
     $("level-progress-fill").style.width = progress + "%";
-    $("medal-icon").textContent = getMedal(level);
     $("level-badge").title = `${tr('level')} ${level} — ${100 - progress} ${tr('toNext')}`;
 }
 
-$("reset-count").onclick = () => { boxCount = 0; $("count").textContent = "0"; };
+$("reset-count").onclick = () => { boxCount = 0; $("count").textContent = "0"; playSound('undo'); };
 
 function updateLanguage() {
     document.documentElement.lang = lang;
@@ -3492,10 +3584,10 @@ function deltaTagPct(curr, prev){
 // test / lines) and per shape/type (cube, cylinder, line, ellipse) — the
 // precise session breakdown, as opposed to the single aggregate total.
 const BREAKDOWN_CATEGORY_META = {
-    practice: { icon: '🧊', ru: 'Практика',    en: 'Practice' },
-    draw:     { icon: '🧠', ru: 'Память',      en: 'Memory' },
-    lines:    { icon: '✏️', ru: 'Линии',       en: 'Lines' },
-    ghost:    { icon: '👻', ru: 'Призрак',     en: 'Ghost' }
+    practice: { icon: 'i-box',   ru: 'Практика', en: 'Practice' },
+    draw:     { icon: 'i-eye',   ru: 'Память',   en: 'Memory' },
+    lines:    { icon: 'i-pen',   ru: 'Линии',    en: 'Lines' },
+    ghost:    { icon: 'i-ghost', ru: 'Призрак',  en: 'Ghost' }
 };
 const BREAKDOWN_SUBTYPE_META = {
     cube:     { ru: 'куб',     en: 'cube' },
@@ -3539,11 +3631,11 @@ function buildBreakdownHTML(dayKey, isEn){
         html += `
         <div class="sum-stat-row sum-breakdown-row">
             <div class="sum-stat-left">
-                <span class="sum-stat-icon">${meta.icon}</span>
+                <span class="sum-stat-icon"><svg class="i"><use href="#${meta.icon}"/></svg></span>
                 <span class="sum-stat-name">${isEn ? meta.en : meta.ru}</span>
             </div>
             <div class="sum-stat-right">
-                <span class="sum-stat-val" style="font-size:0.9em;">${total}</span>
+                <span class="sum-stat-val">${total}</span>
             </div>
         </div>
         <div class="sum-breakdown-detail">${parts}</div>`;
@@ -3579,11 +3671,10 @@ function openSummary(){
 
     // Productivity hero: weighted combo of drawn count + accuracy
     // score = drawn + (acc if available, else 0 bonus)
-    let productivityScore, productivityVsYest, heroEmoji, heroSub;
+    let productivityScore, productivityVsYest, heroSub;
 
     if(drawnToday === 0){
         productivityScore = "0";
-        heroEmoji = "😴";
         heroSub = isEn ? "No sessions yet today" : "Сессий пока нет";
         productivityVsYest = "";
     } else {
@@ -3608,17 +3699,12 @@ function openSummary(){
             productivityVsYest = "";
         }
 
-        if(pts >= drawnToday * 1.4) heroEmoji = "🚀";
-        else if(drawnToday >= 10)   heroEmoji = "💪";
-        else if(drawnToday >= 5)    heroEmoji = "👍";
-        else                         heroEmoji = "🎯";
 
         heroSub = isEn
             ? `${drawnToday} ${shapesWord} · ${accToday != null ? accToday + "% accuracy" : "no accuracy data"}`
             : `${drawnToday} ${shapesWord} · ${accToday != null ? "точность " + accToday + "%" : "без оценки точности"}`;
     }
 
-    document.getElementById("sum-hero-emoji").textContent   = heroEmoji;
     document.getElementById("sum-productivity").textContent = productivityScore;
     document.getElementById("sum-vs-yesterday").innerHTML   = productivityVsYest;
     document.getElementById("sum-hero-sub").textContent     = heroSub;
@@ -3655,7 +3741,6 @@ function openSummary(){
 
     // Total
     document.getElementById("sum-total").textContent = stats.total;
-    document.getElementById("sum-level-icon").textContent = getMedal(Math.floor(stats.total / 100) + 1);
 
     // Session time today
     document.getElementById("sum-lbl-time").textContent = isEn ? "Time today" : "Время сегодня";
@@ -3672,8 +3757,8 @@ function openSummary(){
     if(drawnToday === 0){
         bannerCls = "warning";
         bannerText = isEn
-            ? "You haven't trained today yet — open a session and draw your first shape! 💪"
-            : "Сегодня тренировки ещё не было — нарисуйте первую фигуру! 💪";
+            ? "You haven't trained today yet — open a session and draw your first shape!"
+            : "Сегодня тренировки ещё не было — нарисуйте первую фигуру!";
     } else if(drawnYest === 0 && drawnToday > 0){
         bannerCls = "neutral";
         bannerText = isEn
@@ -3685,18 +3770,18 @@ function openSummary(){
         if(accDiff > 5 && cntDiff >= 0){
             bannerCls = "positive";
             bannerText = isEn
-                ? `You're getting sharper! Accuracy up ${accDiff}% vs yesterday. 🌟`
-                : `Вы становитесь точнее! Точность выросла на ${accDiff}% по сравнению со вчера. 🌟`;
+                ? `You're getting sharper! Accuracy up ${accDiff}% vs yesterday.`
+                : `Вы становитесь точнее! Точность выросла на ${accDiff}% по сравнению со вчера.`;
         } else if(accDiff < -5){
             bannerCls = "warning";
             bannerText = isEn
-                ? `Accuracy dipped ${Math.abs(accDiff)}% today — slow down and focus on each shape. 🎯`
-                : `Точность упала на ${Math.abs(accDiff)}% — замедлитесь и сосредоточьтесь на каждой фигуре. 🎯`;
+                ? `Accuracy dipped ${Math.abs(accDiff)}% today — slow down and focus on each shape.`
+                : `Точность упала на ${Math.abs(accDiff)}% — замедлитесь и сосредоточьтесь на каждой фигуре.`;
         } else if(cntDiff > 0){
             bannerCls = "positive";
             bannerText = isEn
-                ? `More productive than yesterday! +${cntDiff} extra shapes. 🚀`
-                : `Продуктивнее, чем вчера! +${cntDiff} к результату. 🚀`;
+                ? `More productive than yesterday! +${cntDiff} extra shapes.`
+                : `Продуктивнее, чем вчера! +${cntDiff} к результату.`;
         } else if(cntDiff < 0){
             bannerCls = "neutral";
             bannerText = isEn
@@ -3705,8 +3790,8 @@ function openSummary(){
         } else {
             bannerCls = "positive";
             bannerText = isEn
-                ? `Consistent performance! Same count as yesterday. Aim for one more tomorrow. ✨`
-                : `Стабильный результат! Столько же, сколько вчера. Добавьте хотя бы одну завтра. ✨`;
+                ? `Consistent performance! Same count as yesterday. Aim for one more tomorrow.`
+                : `Стабильный результат! Столько же, сколько вчера. Добавьте хотя бы одну завтра.`;
         }
     } else {
         bannerCls = "neutral";
@@ -3761,6 +3846,7 @@ document.getElementById("sum-export-json").onclick = exportStatsJSON;
     updateLanguage();
     switchAppMode(appMode);
     draw();
+    requestAnimationFrame(() => requestAnimationFrame(() => document.body.classList.remove("preload")));
 }
 </script>
 </body>
